@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tính toán Hệ thống Điện Mặt Trời - Manfusi Solar</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: "#0056b3",
+                            secondary: "#003d82",
+                            highlight: "#ffb700",
+                            success: "#28a745",
+                            accent: "#83bf38",
+                        },
+                        animation: {
+                            "fade-in": "fadeIn 0.5s ease-out",
+                            "slide-up": "slideUp 0.6s ease-out",
+                            "pulse-slow":
+                                "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                            "bounce-slow": "bounce 2s infinite",
+                            "spin-slow": "spin 8s linear infinite",
+                        },
+                        keyframes: {
+                            fadeIn: {
+                                "0%": { opacity: "0" },
+                                "100%": { opacity: "1" },
+                            },
+                            slideUp: {
+                                "0%": {
+                                    transform: "translateY(20px)",
+                                    opacity: "0",
+                                },
+                                "100%": {
+                                    transform: "translateY(0)",
+                                    opacity: "1",
+                                },
+                            },
+                        },
+                    },
+                },
+            };
+        </script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        />
+        <style type="text/tailwindcss">
+            @layer components {
+                input[type="range"] {
+                    appearance: none;
+                    height: 0.75rem;
+                    width: 100%;
+                    background: transparent;
+                    position: relative;
+                    z-index: 20;
+                    cursor: pointer;
+                    margin: 0;
+                }
+
+                .slider-container {
+                    position: relative;
+                    padding: 3rem 0;
+                    margin-top: 1rem;
+                }
+
+                .slider-track {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: calc(100% - 1.5rem);
+                    left: 0.75rem;
+                    height: 0.75rem;
+                    background-color: #1e557d;
+                    border-radius: 2rem;
+                    overflow: hidden;
+                }
+
+                .slider-progress {
+                    position: absolute;
+                    height: 100%;
+                    background-color: #83bf38;
+                    border-radius: 2rem;
+                    width: 40%;
+                    transition: width 0.2s ease;
+                }
+
+                .slider-ticks {
+                    position: absolute;
+                    width: calc(100% - 1.5rem);
+                    top: 50%;
+                    left: 0.75rem;
+                    transform: translateY(-50%);
+                    height: 0.75rem;
+                    display: flex;
+                    justify-content: space-between;
+                    pointer-events: none;
+                }
+
+                .tick {
+                    width: 1px;
+                    height: 1.25rem;
+                    background-color: white;
+                    opacity: 0.7;
+                    z-index: 10;
+                }
+
+                input[type="range"]::-webkit-slider-thumb {
+                    appearance: none;
+                    width: 2.5rem;
+                    height: 2.5rem;
+                    border-radius: 50%;
+                    background-color: white;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+                    cursor: pointer;
+                    z-index: 30;
+                    border: none;
+                    transform: translateY(10%);
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    position: relative;
+                    top: 50%;
+                }
+
+                .slider-value-container {
+                    position: absolute;
+                    right: 5%;
+                    bottom: -1.75rem;
+                    z-index: 20;
+                }
+
+                .slider-value-bubble {
+                    background-color: white;
+                    border-radius: 50%;
+                    width: 4.5rem;
+                    height: 4.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.75rem;
+                    font-weight: bold;
+                    color: #83bf38;
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+                }
+
+                .solar-bg-gradient {
+                    background: linear-gradient(
+                        135deg,
+                        #f0f7ff 0%,
+                        #e5edf9 100%
+                    );
+                }
+                .result-card {
+                    transition: all 0.3s ease;
+                }
+                .result-card:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                }
+                .form-control:focus {
+                    transition: all 0.3s ease;
+                }
+                .solar-icon {
+                    animation: spin-slow 8s linear infinite;
+                }
+                .solar-icon-pulse {
+                    animation: pulse-slow 3s infinite;
+                }
+            }
+        </style>
+    </head>
+    <body class="bg-gray-100 text-gray-800 p-5 font-sans leading-relaxed">
+        <div class="max-w-7xl mx-auto p-5">
+            <header class="text-center mb-8 animate-fade-in">
+                <div class="flex justify-center mb-3">
+                    <i
+                        class="fas fa-solar-panel text-accent text-5xl solar-icon"
+                    ></i>
+                </div>
+                <h1 class="text-primary text-4xl font-bold mb-3">
+                    Tính toán Hệ thống
+                    <span class="text-accent">Điện Mặt Trời</span>
+                </h1>
+                <p class="text-gray-600 text-lg">
+                    Tính toán các thông số hệ thống điện mặt trời phù hợp với
+                    nhu cầu của bạn
+                </p>
+            </header>
+
+            <div
+                class="solar-bg-gradient rounded-lg p-6 mb-8 shadow-lg border-l-4 border-accent animate-slide-up"
+            >
+                <h2
+                    class="text-primary text-xl font-bold mb-4 pb-2 border-b border-blue-100 flex items-center"
+                >
+                    <i class="fas fa-sun mr-2 text-accent solar-icon-pulse"></i>
+                    Thông số kỹ thuật
+                    <span id="region-name" class="ml-1 text-accent"
+                        >Miền Bắc</span
+                    >
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div
+                        class="bg-white p-4 rounded-lg shadow-md flex flex-wrap justify-between items-center transition-all hover:shadow-lg"
+                    >
+                        <span
+                            class="font-semibold text-gray-700 flex items-center"
+                        >
+                            <i class="fas fa-clock text-accent mr-2"></i>
+                            Hệ số giờ nắng:
+                        </span>
+                        <span
+                            class="font-bold text-accent text-lg"
+                            id="sunshine-coefficient"
+                            >3,5</span
+                        >
+                    </div>
+                    <div
+                        class="bg-white p-4 rounded-lg shadow-md flex flex-wrap justify-between items-center transition-all hover:shadow-lg"
+                    >
+                        <span
+                            class="font-semibold text-gray-700 flex items-center"
+                        >
+                            <i
+                                class="fas fa-money-bill-wave text-accent mr-2"
+                            ></i>
+                            Tiền điện trung bình:
+                        </span>
+                        <span
+                            class="font-bold text-accent text-lg"
+                            id="electricity-price"
+                            >3.000 đ</span
+                        >
+                    </div>
+                    <div
+                        class="bg-white p-4 rounded-lg shadow-md flex flex-wrap justify-between items-center transition-all hover:shadow-lg"
+                    >
+                        <span
+                            class="font-semibold text-gray-700 flex items-center"
+                        >
+                            <i class="fas fa-battery-half text-accent mr-2"></i>
+                            Hệ số pin lưu trữ:
+                        </span>
+                        <span
+                            class="font-bold text-accent text-lg"
+                            id="battery-coefficient"
+                            >60%</span
+                        >
+                        <div class="w-full mt-2 text-sm text-gray-600">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Tỷ lệ năng lượng mặt trời có thể được lưu trữ và sử
+                            dụng sau khi pin đã được sạc đầy.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div
+                class="flex flex-wrap gap-8 bg-white rounded-lg shadow-xl p-6 animate-slide-up"
+                style="animation-delay: 0.2s"
+            >
+                <div class="flex-1 min-w-[300px]">
+                    <h2
+                        class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center"
+                    >
+                        <i class="fas fa-edit mr-2 text-accent"></i> Thông tin
+                        đầu vào
+                    </h2>
+                    <form id="solar-form">
+                        <div
+                            class="mb-6 relative transition-all hover:translate-x-1 duration-300 ease-in-out"
+                        >
+                            <label
+                                for="region"
+                                class="block mb-2 font-semibold flex items-center"
+                            >
+                                <i
+                                    class="fas fa-map-marker-alt text-accent mr-2"
+                                ></i>
+                                Khu vực lắp đặt
+                                <span class="text-accent">*</span>
+                            </label>
+                            <select
+                                id="region"
+                                class="w-full p-3 border border-gray-300 rounded-md text-base focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 shadow-sm"
+                                required
+                            >
+                                <option value="north">Miền Bắc</option>
+                                <option value="central">Miền Trung</option>
+                                <option value="south">Miền Nam</option>
+                            </select>
+                            <small class="block mt-1 text-gray-600 text-sm">
+                                Chọn khu vực bạn dự định lắp đặt hệ thống
+                            </small>
+                        </div>
+
+                        <div
+                            class="mb-6 relative transition-all hover:translate-x-1 duration-300 ease-in-out"
+                        >
+                            <label
+                                for="electricity-bill"
+                                class="block mb-2 font-semibold flex items-center"
+                            >
+                                <i class="fas fa-receipt text-accent mr-2"></i>
+                                Tiền điện trung bình hàng tháng
+                                <span class="text-accent">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                id="electricity-bill"
+                                placeholder="2,000,000đ"
+                                class="w-full p-3 border border-gray-300 rounded-md text-lg font-bold focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 shadow-sm"
+                                required
+                            />
+                            <small class="block mt-1 text-gray-600 text-sm">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Nhập số tiền điện trung bình bạn phải trả mỗi
+                                tháng
+                            </small>
+                        </div>
+
+                        <div
+                            class="mb-16 relative transition-all hover:translate-x-1 duration-300 ease-in-out"
+                        >
+                            <label
+                                for="daytime-usage"
+                                class="block mb-2 font-semibold flex items-center"
+                            >
+                                <i
+                                    class="fas fa-lightbulb text-accent mr-2"
+                                ></i>
+                                Mức sử dụng điện từ 6 đến 18h
+                                <span class="text-accent">*</span>
+                            </label>
+
+                            <div class="slider-container">
+                                <div class="slider-track">
+                                    <div
+                                        class="slider-progress"
+                                        id="slider-progress"
+                                    ></div>
+                                </div>
+                                <div class="slider-ticks">
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                    <div class="tick"></div>
+                                </div>
+                                <input
+                                    type="range"
+                                    id="daytime-usage"
+                                    min="0"
+                                    max="100"
+                                    value="50"
+                                    step="10"
+                                    class="w-full h-12 absolute top-1/2 left-0 -translate-y-1/2"
+                                    required
+                                />
+                                <div class="slider-value-container">
+                                    <div class="slider-value-bubble">
+                                        <span id="daytime-usage-value">50</span
+                                        >%
+                                    </div>
+                                </div>
+                            </div>
+
+                            <small class="block mt-8 text-gray-600 text-sm">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Tỷ lệ phần trăm điện năng tiêu thụ trong khung
+                                giờ 6h-18h
+                            </small>
+                        </div>
+
+                        <div
+                            class="mb-8 relative transition-all hover:translate-x-1 duration-300 ease-in-out"
+                        >
+                            <label
+                                for="battery-capacity"
+                                class="block mb-2 font-semibold flex items-center"
+                            >
+                                <i
+                                    class="fas fa-battery-full text-accent mr-2"
+                                ></i>
+                                Bộ lưu điện:
+                            </label>
+                            <select
+                                id="battery-capacity"
+                                class="w-full p-3 border border-gray-300 rounded-md text-base focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 shadow-sm"
+                                required
+                            >
+                                <option value="0">
+                                    Không sử dụng bộ lưu điện
+                                </option>
+                                <option value="5.12">
+                                    Sử dụng bộ lưu điện 5.12 kWh
+                                </option>
+                            </select>
+                            <small class="block mt-1 text-gray-600 text-sm">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Chọn có hoặc không sử dụng pin lưu trữ điện
+                                năng. Bộ lưu điện 5.12 kWh hoạt động như máy
+                                phát điện khi mất điện, có thể phát 5kW trong
+                                vòng 1 giờ. Nếu còn nắng, điện mặt trời sẽ tiếp
+                                tục sạc vào bộ lưu trữ để duy trì nguồn điện.
+                            </small>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full bg-accent hover:bg-accent/90 text-white font-semibold py-4 px-4 rounded-md transition transform hover:scale-[1.02] active:scale-[0.98] shadow-lg flex justify-center items-center gap-2"
+                        >
+                            <i class="fas fa-calculator text-lg"></i> Tính toán
+                        </button>
+                    </form>
+                </div>
+
+                <div class="flex-1 min-w-[300px]" id="results">
+                    <h2
+                        class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center"
+                    >
+                        <i class="fas fa-chart-line mr-2 text-accent"></i> Kết
+                        quả tính toán
+                    </h2>
+                    <div class="hidden" id="results-content">
+                        <div
+                            class="mb-6 p-5 bg-gray-50 rounded-lg shadow-md result-card"
+                        >
+                            <h3
+                                class="text-primary font-semibold mb-4 text-lg flex items-center"
+                            >
+                                <i class="fas fa-coins text-accent mr-2"></i>
+                                Tổng chi phí:
+                            </h3>
+                            <p
+                                id="total-cost"
+                                class="text-accent font-semibold text-lg"
+                            >
+                                -
+                            </p>
+                        </div>
+
+                        <div
+                            class="mb-6 p-5 bg-gray-50 rounded-lg shadow-md result-card"
+                        >
+                            <h3
+                                class="text-primary font-semibold mb-4 text-lg flex items-center"
+                            >
+                                <i class="fas fa-bolt text-accent mr-2"></i>
+                                Công suất hệ thống:
+                            </h3>
+                            <p id="system-capacity">-</p>
+                        </div>
+
+                        <div
+                            class="mb-6 p-5 bg-gray-50 rounded-lg shadow-md border-l-4 border-accent result-card"
+                        >
+                            <h3
+                                class="text-primary font-semibold mb-4 text-lg flex items-center"
+                            >
+                                <i class="fas fa-star text-accent mr-2"></i> Lợi
+                                ích sau khi lắp đặt:
+                            </h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-center">
+                                    <i
+                                        class="fas fa-money-bill-wave text-accent mr-3 w-5"
+                                    ></i>
+                                    Tiết kiệm mỗi tháng:
+                                    <span
+                                        id="monthly-savings"
+                                        class="text-accent font-semibold ml-1"
+                                        >-</span
+                                    >
+                                </li>
+                                <li class="flex items-center">
+                                    <i
+                                        class="fas fa-calendar-alt text-accent mr-3 w-5"
+                                    ></i>
+                                    Tiết kiệm mỗi năm:
+                                    <span
+                                        id="yearly-savings"
+                                        class="text-accent font-semibold ml-1"
+                                        >-</span
+                                    >
+                                </li>
+                                <li class="flex items-center">
+                                    <i
+                                        class="fas fa-hourglass-end text-accent mr-3 w-5"
+                                    ></i>
+                                    Tiết kiệm sau 30 năm:
+                                    <span
+                                        id="thirty-year-savings"
+                                        class="text-accent font-semibold ml-1"
+                                        >-</span
+                                    >
+                                </li>
+                                <li class="flex items-center">
+                                    <i
+                                        class="fas fa-history text-accent mr-3 w-5"
+                                    ></i>
+                                    Thời gian thu hồi vốn:
+                                    <span id="payback-period" class="ml-1"
+                                        >-</span
+                                    >
+                                </li>
+                                <li class="flex items-center">
+                                    <i
+                                        class="fas fa-chart-pie text-accent mr-3 w-5"
+                                    ></i>
+                                    Lợi nhuận đầu tư:
+                                    <span
+                                        id="roi"
+                                        class="text-accent font-semibold ml-1"
+                                        >-</span
+                                    >
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div
+                            class="mb-6 p-5 bg-gray-50 rounded-lg shadow-md result-card"
+                        >
+                            <h3
+                                class="text-primary font-semibold mb-4 text-lg flex items-center"
+                            >
+                                <i class="fas fa-box text-accent mr-2"></i> Gói
+                                sản phẩm đề xuất:
+                            </h3>
+                            <p id="recommended-product">-</p>
+                        </div>
+
+                        <div
+                            class="mt-8 text-center p-5 bg-blue-50 rounded-lg shadow-md transition-all hover:shadow-lg"
+                        >
+                            <p class="flex items-center justify-center">
+                                <i
+                                    class="fas fa-headset text-accent text-xl mr-2"
+                                ></i>
+                                Để được tư vấn chi tiết, vui lòng liên hệ:
+                                <a
+                                    href="tel:+84xxxxxxxxx"
+                                    class="text-accent font-semibold no-underline hover:underline ml-1 transition-all"
+                                >
+                                    Hotline: +84 xxx xxx xxx
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="text-center p-10 bg-gray-50 rounded-lg text-gray-600 shadow-md"
+                        id="results-placeholder"
+                    >
+                        <p>
+                            <i
+                                class="fas fa-solar-panel text-6xl text-accent block mb-4 solar-icon-pulse"
+                            ></i>
+                            Nhập thông tin và nhấn nút "Tính toán" để xem kết
+                            quả.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <footer
+                class="mt-8 text-center text-gray-500 text-sm pt-5 border-t border-gray-200"
+            >
+                <p>&copy; 2023 Manfusi Solar. Mọi quyền được bảo lưu.</p>
+            </footer>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
