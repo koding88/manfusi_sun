@@ -270,35 +270,248 @@ const data = [
             max: 2000000,
         },
     })),
-
     // // Row 2
-    // (row2 = createRecord({})),
+    (row2 = createRecord({
+        orderNumber: 2,
+        productType: Column.productType.BAM_TAI,
+        productName: "S8-1P",
+        powerDetails: "Hệ bám tải 8,54 kWp 1 pha, không lưu trữ",
+        equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
+        storage: 0.0,
+        kwpNumber: 8.54,
+        unitPrice: 12000000,
+        monthlyDiscountPercentage: 10, // 10%
+        minimumMonthlyInstallment: 1200000,
+        maximumMonthlyInstallment: 1400000,
+        suitableForFamilyMonthly: {
+            min: 2500000,
+            max: 4000000,
+        },
+    })),
     // // Row 3
-    // (row3 = createRecord({})),
+    (row3 = createRecord({
+        orderNumber: 3,
+        productType: Column.productType.BAM_TAI,
+        productName: "S11-1P",
+        powerDetails: "Hệ bám tải 10,98 kWp 1 pha, không lưu trữ",
+        equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
+        storage: 0.0,
+        kwpNumber: 10.98,
+        unitPrice: 11000000,
+        monthlyDiscountPercentage: 10, // 10%
+        minimumMonthlyInstallment: 1200000,
+        maximumMonthlyInstallment: 2000000,
+        suitableForFamilyMonthly: {
+            min: 3000000,
+            max: 5000000,
+        },
+    })),
     // // Row 4
-    // (row4 = createRecord({})),
+    (row4 = createRecord({
+        orderNumber: 4,
+        productType: Column.productType.BAM_TAI,
+        productName: "S11-3P",
+        powerDetails: "Hệ bám tải 10,98 kWp 3 pha, không lưu trữ",
+        equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
+        storage: 0.0,
+        kwpNumber: 10.98,
+        unitPrice: 11000000,
+        monthlyDiscountPercentage: 10, // 10%
+        minimumMonthlyInstallment: 1200000,
+        maximumMonthlyInstallment: 2000000,
+        suitableForFamilyMonthly: {
+            min: 3000000,
+            max: 5000000,
+        },
+    })),
     // // Row 5
-    // (row5 = createRecord({})),
+    (row5 = createRecord({
+        orderNumber: 5,
+        productType: Column.productType.BAM_TAI,
+        productName: "S17-3P",
+        powerDetails: "Hệ bám tải 17,08 kWp 3 pha, không lưu trữ",
+        equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
+        storage: 0.0,
+        kwpNumber: 17.08,
+        unitPrice: 11000000,
+        monthlyDiscountPercentage: 10, // 10%
+        minimumMonthlyInstallment: 2200000,
+        maximumMonthlyInstallment: 3200000,
+        suitableForFamilyMonthly: {
+            min: 4000000,
+            max: 8000000,
+        },
+    })),
     // // Row 6
-    // (row6 = createRecord({})),
+    (row6 = createRecord({
+        orderNumber: 6,
+        productType: Column.productType.BAM_TAI,
+        productName: "S22-3P",
+        powerDetails: "Hệ bám tải 21,96 kWp 3 pha, không lưu trữ",
+        equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
+        storage: 0.0,
+        kwpNumber: 21.96,
+        unitPrice: 10000000,
+        monthlyDiscountPercentage: 10, // 10%
+        minimumMonthlyInstallment: 2500000,
+        maximumMonthlyInstallment: 3600000,
+        suitableForFamilyMonthly: {
+            min: 6000000,
+            max: 9500000,
+        },
+    })),
     // // Row 7
-    // (row7 = createRecord({})),
+    (row7 = createRecord({
+        orderNumber: 7,
+        productType: Column.productType.BAM_TAI,
+        productName: "S34-3P",
+        powerDetails: "Hệ bám tải 34,16 kWp 3 pha, không lưu trữ",
+        equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
+        storage: 0.0,
+        kwpNumber: 34.16,
+        unitPrice: 10000000,
+        monthlyDiscountPercentage: 10, // 10%
+        minimumMonthlyInstallment: 3900000,
+        maximumMonthlyInstallment: 5700000,
+        suitableForFamilyMonthly: {
+            min: 9000000,
+            max: 15000000,
+        },
+    })),
     // // Row 8
-    // (row8 = createRecord({})),
+    (row8 = createRecord({
+        orderNumber: 8,
+        productType: Column.productType.BAM_TAI,
+        productName: "S55-3P",
+        powerDetails: "Hệ bám tải 54,9 kWp 3 pha, không lưu trữ",
+        equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
+        storage: 0.0,
+        kwpNumber: 54.9,
+        unitPrice: 10000000,
+        monthlyDiscountPercentage: 10, // 10%
+        minimumMonthlyInstallment: 6200000,
+        maximumMonthlyInstallment: 9200000,
+        suitableForFamilyMonthly: {
+            min: 15000000,
+            max: 24000000,
+        },
+    })),
     // // Row 9
-    // (row9 = createRecord({})),
-    // // Row 10
-    // (row10 = createRecord({})),
+    (row9 = createRecord({
+        orderNumber: 9,
+        productType: Column.productType.BAM_TAI,
+        productName: "S92-3P",
+        powerDetails: "Hệ bám tải 91,5 kWp 3 pha, không lưu trữ",
+        equipmentDetails: "Tấm quang năng JA 610W, biến tần Growatt",
+        storage: 0.0,
+        kwpNumber: 91.5,
+        unitPrice: 10000000,
+        monthlyDiscountPercentage: 10, // 10%
+        minimumMonthlyInstallment: 10400000,
+        maximumMonthlyInstallment: 15000000,
+        suitableForFamilyMonthly: {
+            min: 25000000,
+            max: 40000000,
+        },
+    })),
+    // Row 10
+    (row10 = createRecord({
+        orderNumber: 10,
+        productType: Column.productType.BAM_TAI,
+        productName: "S120-3P",
+        powerDetails: "Hệ bám tải 118,95 kWp 3 pha, không lưu trữ",
+        equipmentDetails: "Tấm quang năng JA 610W, biến tần Growatt",
+        storage: 0.0,
+        kwpNumber: 118.95,
+        unitPrice: 9350000,
+        monthlyDiscountPercentage: 10, // 10%
+        minimumMonthlyInstallment: 12700000,
+        maximumMonthlyInstallment: 18600000,
+        suitableForFamilyMonthly: {
+            min: 32000000,
+            max: 52000000,
+        },
+    })),
     // // Row 11
-    // (row11 = createRecord({})),
+    (row11 = createRecord({
+        orderNumber: 11,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB5-1P",
+        powerDetails: "Hệ bám tải, lưu trữ 5,49kWp 1 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 5.49,
+        unitPrice: 20000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 1300000,
+        maximumMonthlyInstallment: 1900000,
+        suitableForFamilyMonthly: {
+            min: 2000000,
+            max: 3000000,
+        },
+    })),
     // // Row 12
-    // (row12 = createRecord({})),
+    (row12 = createRecord({
+        orderNumber: 12,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB5-1P",
+        powerDetails: "Hệ bám tải, lưu trữ 5,49kWp 1 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần DaHai, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 5.49,
+        unitPrice: 19000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 1200000,
+        maximumMonthlyInstallment: 1800000,
+        suitableForFamilyMonthly: {
+            min: 2000000,
+            max: 3000000,
+        },
+    })),
     // // Row 13
-    // (row13 = createRecord({})),
+    (row13 = createRecord({
+        orderNumber: 13,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB8-1P",
+        powerDetails: "Hệ bám tải, lưu trữ 8,54kWp 1 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 8.54,
+        unitPrice: 20000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 2000000,
+        maximumMonthlyInstallment: 3000000,
+        suitableForFamilyMonthly: {
+            min: 2600000,
+            max: 4200000,
+        },
+    })),
     // // Row 14
-    // (row14 = createRecord({})),
+    (row14 = createRecord({
+        orderNumber: 14,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB8-1P",
+        powerDetails: "Hệ bám tải, lưu trữ 8,54kWp 1 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần DaHai, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 8.54,
+        unitPrice: 19000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 1900000,
+        maximumMonthlyInstallment: 2900000,
+        suitableForFamilyMonthly: {
+            min: 2600000,
+            max: 4300000,
+        },
+    })),
     // // Row 15
-    // (row15 = createRecord({})),
+    (row15 = createRecord({
+        
+    })),
     // // Row 16
     // (row16 = createRecord({})),
     // // Row 17
