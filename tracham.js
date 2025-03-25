@@ -577,477 +577,239 @@ const setupCreditTermFilterButtons = () => {
 
 // Function to calculate installment payment
 const calculateInstallmentPayment = () => {
-    // Input values
+    // Show loading indicator
+    const button = document.querySelector(
+        'button[onclick="calculateInstallmentPayment()"]'
+    );
+    const loadingIndicator = button.querySelector(".loading-indicator");
+    const calculatorIcon = button.querySelector(".fa-calculator");
+
+    // Disable button and show loading state
+    button.disabled = true;
+    loadingIndicator.classList.remove("hidden");
+    calculatorIcon.classList.add("hidden");
+
+    // Get input values
     const contractValue = parseFloat(
-        document.getElementById("contractValue").value.replace(/[,.đ₫]/g, "")
+        document.getElementById("contractValue").value.replace(/[^\d]/g, "")
     );
     const downPayment = parseFloat(
-        document.getElementById("downPayment").value.replace(/[,.đ₫]/g, "")
+        document.getElementById("downPayment").value.replace(/[^\d]/g, "")
     );
 
-    // Calculate remaining payment (max 80% of contract value)
-    const maxLoanPercentage = 80; // 80%
-    const maxLoanAmount = (contractValue * maxLoanPercentage) / 100;
+    // Use default values if elements don't exist
+    const interestRateElement = document.getElementById("interestRate");
+    const interestRate = interestRateElement
+        ? parseFloat(interestRateElement.value) / 100
+        : 7.5 / 100; // Default to 7.5% if element doesn't exist
 
-    // Validate inputs
-    if (isNaN(contractValue) || contractValue <= 0 || isNaN(downPayment)) {
-        // Create a nice alert
-        const resultSummary = document.getElementById("result-summary");
-        if (resultSummary) {
-            resultSummary.innerHTML = `
-                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-8 rounded-md shadow animate-fade-in">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-circle text-red-500 text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-red-800 font-medium">Vui lòng kiểm tra lại thông tin</h3>
-                            <p class="text-red-700 text-sm mt-1">Hãy nhập giá trị hợp đồng và thanh toán trước hợp lệ.</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        // Hide other sections if there's an error
-        const scheduleContainer = document.getElementById(
-            "payment-schedule-container"
-        );
-        if (scheduleContainer) {
-            scheduleContainer.style.display = "none";
-        }
-        return;
-    }
+    const termElement = document.getElementById("term");
+    const term = termElement ? parseInt(termElement.value) : 60; // Default to 60 months if element doesn't exist
 
-    // Calculate down payment percentage
-    const downPaymentPercentage = Math.round(
-        (downPayment / contractValue) * 100
-    );
+    // Calculate loan amount
+    const loanAmount = contractValue - downPayment;
 
-    // Check if down payment is sufficient (at least 20% of contract value)
-    if (downPaymentPercentage < 20) {
-        // Create a nice alert
-        const resultSummary = document.getElementById("result-summary");
-        if (resultSummary) {
-            resultSummary.innerHTML = `
-                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-8 rounded-md shadow animate-fade-in">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-yellow-800 font-medium">Thanh toán trước chưa đủ</h3>
-                            <p class="text-yellow-700 text-sm mt-1">Thanh toán trước tối thiểu là 20% giá trị hợp đồng (${formatCurrency(
-                                contractValue * 0.2
-                            )}).</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        // Hide other sections if there's an error
-        document.getElementById("payment-schedule-container").style.display =
-            "none";
-        // Update down payment percentage display
-        const percentElement = document.getElementById("downPaymentPercent");
-        const progressBar = document.querySelector(".progress-value");
+    // Simulate calculation delay for better UX
+    setTimeout(() => {
+        // Calculate payment schedule for entire loan term
+        let paymentSchedule = "";
+        let remainingBalance = loanAmount;
+        const monthlyPrincipalPayment = loanAmount / term;
+        let totalInterest = 0;
 
-        if (percentElement) {
-            percentElement.textContent = downPaymentPercentage + "%";
-        }
-        if (progressBar) {
-            progressBar.style.width = downPaymentPercentage + "%";
-            progressBar.classList.remove("bg-success");
-            progressBar.classList.add("bg-warning");
-        }
-        return;
-    }
+        // Generate full payment schedule
+        for (let month = 0; month <= term; month++) {
+            // For month 0, there's no payment yet
+            if (month === 0) {
+                paymentSchedule += `
+                <tr>
+                    <td class="py-2 px-4">${month}</td>
+                    <td class="py-2 px-4">${remainingBalance.toLocaleString(
+                        "vi-VN"
+                    )} đ</td>
+                    <td class="py-2 px-4">0</td>
+                    <td class="py-2 px-4">0 đ</td>
+                    <td class="py-2 px-4">0 đ</td>
+                </tr>`;
+                continue;
+            }
 
-    // Calculate remaining payment (loan amount)
-    const remainingPayment = contractValue - downPayment;
+            // Determine interest rate (7.5% for first year, 12% after)
+            const currentInterestRate = month <= 12 ? 7.5 / 100 : 12 / 100;
+            const monthlyInterestRate = currentInterestRate / 12;
 
-    // Check if loan amount exceeds maximum allowed
-    if (remainingPayment > maxLoanAmount) {
-        // Create a warning alert
-        const resultSummary = document.getElementById("result-summary");
-        if (resultSummary) {
-            resultSummary.innerHTML = `
-                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-8 rounded-md shadow animate-fade-in">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h3 class="text-yellow-800 font-medium">Thanh toán trước chưa đủ</h3>
-                            <p class="text-yellow-700 text-sm mt-1">Số tiền vay không được vượt quá ${maxLoanPercentage}% giá trị hợp đồng (${formatCurrency(
-                maxLoanAmount
-            )}).</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        // Hide other sections if there's an error
-        document.getElementById("payment-schedule-container").style.display =
-            "none";
-        // Update down payment percentage display
-        const percentElement = document.getElementById("downPaymentPercent");
-        const progressBar = document.querySelector(".progress-value");
-
-        if (percentElement) {
-            percentElement.textContent = downPaymentPercentage + "%";
-        }
-        if (progressBar) {
-            progressBar.style.width = downPaymentPercentage + "%";
-            progressBar.classList.remove("bg-success");
-            progressBar.classList.add("bg-warning");
-        }
-        return;
-    }
-
-    // Update down payment percentage display with success color
-    const percentElement = document.getElementById("downPaymentPercent");
-    const progressBar = document.querySelector(".progress-value");
-
-    if (percentElement) {
-        percentElement.textContent = downPaymentPercentage + "%";
-    }
-    if (progressBar) {
-        progressBar.style.width = downPaymentPercentage + "%";
-        progressBar.classList.remove("bg-warning");
-        progressBar.classList.add("bg-success");
-    }
-
-    // Interest rates
-    const firstYearInterestRate = 7.5 / 100; // 7.5%
-    const secondYearInterestRate = 12 / 100; // 12%
-
-    // Calculate for terms from 6 to 60 months
-    const maxTerm = 60; // Maximum term is 60 months
-
-    // Generate payment schedules for all terms
-    let allTermPayments = {};
-
-    for (let term = 6; term <= maxTerm; term += 6) {
-        const monthlyPrincipalPayment = remainingPayment / term;
-
-        // Generate payment schedule for this term
-        let monthlyPayments = [];
-        let termRemainingBalance = remainingPayment;
-        let termTotalInterest = 0;
-
-        // Add initial state (month 0)
-        monthlyPayments.push({
-            month: 0,
-            remainingBalance: termRemainingBalance,
-            principalPayment: 0,
-            interestPayment: 0,
-            totalPayment: 0,
-        });
-
-        // Calculate monthly payments
-        for (let month = 1; month <= term; month++) {
-            // Determine current interest rate based on month
-            const currentInterestRate =
-                month <= 12 ? firstYearInterestRate : secondYearInterestRate;
-
-            // Calculate monthly interest (annual rate / 12)
-            const monthlyInterest =
-                termRemainingBalance * (currentInterestRate / 12);
+            // Calculate monthly interest
+            const interestPayment = remainingBalance * monthlyInterestRate;
+            totalInterest += interestPayment;
 
             // Calculate total monthly payment
             const totalMonthlyPayment =
-                monthlyPrincipalPayment + monthlyInterest;
+                monthlyPrincipalPayment + interestPayment;
 
             // Update remaining balance
-            termRemainingBalance -= monthlyPrincipalPayment;
+            remainingBalance -= monthlyPrincipalPayment;
 
-            // Round to avoid floating point issues
-            const roundedRemainingBalance = Math.round(termRemainingBalance);
+            // Special styling for certain rows
+            let rowClass = "";
+            if (month === 12) rowClass = "bg-blue-50"; // End of first year
+            if (month === 24) rowClass = "bg-orange-50"; // End of second year
 
-            // Track total interest
-            termTotalInterest += monthlyInterest;
-
-            // Add payment details to schedule
-            monthlyPayments.push({
-                month,
-                remainingBalance: roundedRemainingBalance,
-                principalPayment: monthlyPrincipalPayment,
-                interestPayment: monthlyInterest,
-                totalPayment: totalMonthlyPayment,
-            });
+            paymentSchedule += `
+            <tr class="${rowClass}">
+                <td class="py-2 px-4">${month}</td>
+                <td class="py-2 px-4">${Math.max(
+                    0,
+                    remainingBalance
+                ).toLocaleString("vi-VN")} đ</td>
+                <td class="py-2 px-4">${monthlyPrincipalPayment.toLocaleString(
+                    "vi-VN"
+                )} đ</td>
+                <td class="py-2 px-4">${interestPayment.toLocaleString(
+                    "vi-VN"
+                )} đ</td>
+                <td class="py-2 px-4">${totalMonthlyPayment.toLocaleString(
+                    "vi-VN"
+                )} đ</td>
+            </tr>`;
         }
 
-        // Calculate total payments
-        const termTotalPayments = remainingPayment + termTotalInterest;
+        // Add total row
+        paymentSchedule += `
+        <tr class="bg-gray-100 font-bold">
+            <td class="py-2 px-4">Tổng</td>
+            <td class="py-2 px-4"></td>
+            <td class="py-2 px-4">${loanAmount.toLocaleString("vi-VN")} đ</td>
+            <td class="py-2 px-4">${totalInterest.toLocaleString(
+                "vi-VN"
+            )} đ</td>
+            <td class="py-2 px-4">${(loanAmount + totalInterest).toLocaleString(
+                "vi-VN"
+            )} đ</td>
+        </tr>`;
 
-        // Store the payment schedule for this term
-        allTermPayments[term] = {
-            payments: monthlyPayments,
-            totalInterest: termTotalInterest,
-            totalPayments: termTotalPayments,
-        };
-    }
+        // Prepare summary HTML for the results section
+        const resultSummaryHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-primary/5 p-4 rounded-lg">
+                <h4 class="font-semibold text-primary mb-2">Thông tin khoản vay</h4>
+                <ul class="space-y-2">
+                    <li class="flex justify-between"><span>Giá trị hệ thống:</span> <span class="font-medium">${contractValue.toLocaleString(
+                        "vi-VN"
+                    )}đ</span></li>
+                    <li class="flex justify-between"><span>Số tiền trả trước:</span> <span class="font-medium">${downPayment.toLocaleString(
+                        "vi-VN"
+                    )}đ</span></li>
+                    <li class="flex justify-between"><span>Số tiền vay:</span> <span class="font-medium">${loanAmount.toLocaleString(
+                        "vi-VN"
+                    )}đ</span></li>
+                    <li class="flex justify-between"><span>Lãi suất năm đầu:</span> <span class="font-medium">7,5%</span></li>
+                    <li class="flex justify-between"><span>Lãi suất từ năm thứ 2:</span> <span class="font-medium">12%</span></li>
+                    <li class="flex justify-between"><span>Kỳ hạn vay:</span> <span class="font-medium">${term} tháng</span></li>
+                </ul>
+            </div>
 
-    // Generate HTML for summary results
-    const resultHTML = `
-        <div id="result" class="opacity-0 transform -translate-y-4 transition-all duration-500">
-            <!-- Loan Summary -->
-            <div class="card-gradient rounded-lg shadow-md p-6 border-l-4 border-accent relative overflow-hidden mb-6">
-                <!-- Summary header -->
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-secondary flex items-center">
-                        <i class="fas fa-calculator text-primary mr-2"></i>
-                        Thông tin khoản trả góp
-                    </h3>
-                    <span class="badge badge-primary">
-                        <i class="fas fa-info-circle mr-1"></i> Tổng quan
-                    </span>
-                </div>
-
-                <!-- Loan info -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                        <div class="font-medium text-gray-600 flex items-center mb-1">
-                            <i class="fas fa-tag text-primary mr-2"></i>
-                            Giá trị hợp đồng
-                        </div>
-                        <p class="text-xl font-bold text-primary">${formatCurrency(
-                            contractValue
-                        )}</p>
-                    </div>
-                    
-                    <div class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                        <div class="font-medium text-gray-600 flex items-center mb-1">
-                            <i class="fas fa-money-bill-wave text-success mr-2"></i>
-                            Thanh toán trước
-                        </div>
-                        <p class="text-xl font-bold text-success">${formatCurrency(
-                            downPayment
-                        )} <span class="text-sm font-normal">(${downPaymentPercentage}%)</span></p>
-                    </div>
-                    
-                    <div class="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-                        <div class="font-medium text-gray-600 flex items-center mb-1">
-                            <i class="fas fa-wallet text-accent mr-2"></i>
-                            Khoản vay
-                        </div>
-                        <p class="text-xl font-bold text-accent">${formatCurrency(
-                            remainingPayment
-                        )}</p>
-                    </div>
-                </div>
-                
-                <!-- Interest rate information -->
-                <div class="mt-6 bg-blue-50 p-4 rounded-lg">
-                    <h4 class="text-primary font-medium mb-2">Thông tin lãi suất</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Lãi suất năm đầu tiên:</span>
-                            <span class="font-medium">7,5%</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-600">Lãi suất từ năm thứ 2:</span>
-                            <span class="font-medium">12%</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="bg-accent/5 p-4 rounded-lg">
+                <h4 class="font-semibold text-accent mb-2">Kết quả tính toán</h4>
+                <ul class="space-y-2">
+                    <li class="flex justify-between"><span>Tổng tiền gốc phải trả:</span> <span class="font-medium">${loanAmount.toLocaleString(
+                        "vi-VN"
+                    )}đ</span></li>
+                    <li class="flex justify-between"><span>Tổng tiền lãi phải trả:</span> <span class="font-medium">${totalInterest.toLocaleString(
+                        "vi-VN"
+                    )}đ</span></li>
+                    <li class="flex justify-between"><span>Tổng chi phí khoản vay:</span> <span class="font-medium text-accent">${(
+                        loanAmount + totalInterest
+                    ).toLocaleString("vi-VN")}đ</span></li>
+                </ul>
             </div>
         </div>
-    `;
+        
+        <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <h4 class="font-semibold text-blue-600 mb-2 flex items-center">
+                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Lợi ích khi lắp đặt hệ thống điện mặt trời
+            </h4>
+            <ul class="space-y-1 text-blue-800">
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                    <span>Tiết kiệm chi phí điện hàng tháng lên đến 70-90%</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                    <span>Đầu tư một lần, sử dụng lâu dài (25-30 năm)</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                    <span>Khoản tiết kiệm hàng tháng có thể cao hơn khoản trả góp</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                    <span>Góp phần bảo vệ môi trường và giảm phát thải carbon</span>
+                </li>
+            </ul>
+        </div>`;
 
-    // Generate payment schedule table
-    let scheduleHTML = `
-        <div class="mb-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-secondary">
-                    <i class="fas fa-calendar-alt text-primary mr-2"></i>
-                    Lịch thanh toán hàng tháng
-                </h3>
-                
-                <!-- Term filter buttons positioned inline with the heading -->
-                <div class="flex space-x-2">
-                    <span class="text-sm font-medium mr-1 self-center">Lọc:</span>
-                    <button id="all-terms" class="term-filter-btn active-filter">
-                        Tất cả
-                    </button>
-                    <button id="short-terms" class="term-filter-btn">
-                        ≤12 tháng
-                    </button>
-                    <button id="medium-terms" class="term-filter-btn">
-                        18-36 tháng
-                    </button>
-                    <button id="long-terms" class="term-filter-btn">
-                        >36 tháng
-                    </button>
-                </div>
-            </div>
-            <div class="overflow-x-auto relative">
-                <table class="w-full">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="table-header">Kỳ hạn</th>
-                            <th class="table-header">
-                                <div class="flex items-center">
-                                    <span>Lãi trung bình hàng tháng</span>
-                                    <span class="tooltip ml-1">
-                                        <i class="far fa-question-circle text-primary"></i>
-                                        <span class="tooltiptext">Lãi trung bình phải trả mỗi tháng</span>
-                                    </span>
-                                </div>
-                            </th>
-                            <th class="table-header">
-                                <div class="flex items-center">
-                                    <span>Gốc trả hàng tháng</span>
-                                    <span class="tooltip ml-1">
-                                        <i class="far fa-question-circle text-primary"></i>
-                                        <span class="tooltiptext">Tiền gốc phải trả mỗi tháng</span>
-                                    </span>
-                                </div>
-                            </th>
-                            <th class="table-header">
-                                <div class="flex items-center">
-                                    <span>Trung bình hàng tháng</span>
-                                    <span class="tooltip ml-1">
-                                        <i class="far fa-question-circle text-primary"></i>
-                                        <span class="tooltiptext">Tổng số tiền trung bình phải trả mỗi tháng</span>
-                                    </span>
-                                </div>
-                            </th>
-                            <th class="table-header">
-                                <div class="flex items-center">
-                                    <span>Tổng tiền trả</span>
-                                    <span class="tooltip ml-1">
-                                        <i class="far fa-question-circle text-primary"></i>
-                                        <span class="tooltiptext">Tổng số tiền phải trả trong toàn bộ kỳ hạn</span>
-                                    </span>
-                                </div>
-                            </th>
-                            <th class="table-header">
-                                <div class="flex items-center">
-                                    <span>Chi tiết</span>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-    `;
+        // Create payment schedule table HTML
+        const paymentScheduleHTML = `
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="py-2 px-4 border-b text-left">Tháng</th>
+                        <th class="py-2 px-4 border-b text-left">Số tiền gốc còn lại</th>
+                        <th class="py-2 px-4 border-b text-left">Số tiền gốc phải trả hàng tháng</th>
+                        <th class="py-2 px-4 border-b text-left">Số tiền lãi phải trả hàng tháng (dự kiến)</th>
+                        <th class="py-2 px-4 border-b text-left">Tổng tiền gốc và lãi trả hàng tháng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${paymentSchedule}
+                </tbody>
+            </table>
+        </div>`;
 
-    for (let term = 6; term <= maxTerm; term += 6) {
-        const termData = allTermPayments[term];
-        const avgMonthlyInterest = termData.totalInterest / term;
-        const monthlyPrincipal = remainingPayment / term;
-        const avgMonthlyPayment = termData.totalPayments / term;
+        // Update the result container
+        document.getElementById("result-summary").innerHTML = resultSummaryHTML;
 
-        // Determine term type for filtering
-        let termType = "";
-        if (term <= 12) termType = "short-term";
-        else if (term <= 36) termType = "medium-term";
-        else termType = "long-term";
+        // Show the payment schedule container and update its content
+        const paymentScheduleContainer = document.getElementById(
+            "payment-schedule-container"
+        );
+        paymentScheduleContainer.style.display = "block";
+        document.getElementById("payment-schedule").innerHTML =
+            paymentScheduleHTML;
 
-        // Determine row color
-        let rowClass = "";
-        if (term === 24) {
-            // Highlight 24 months as recommended
-            rowClass = "bg-green-50";
-        }
+        // Show notes container
+        document.getElementById("notes-container").style.display = "block";
+        document.getElementById("notes").innerHTML = `
+        <div class="text-gray-700">
+            <h4 class="font-semibold text-primary mb-3">Lưu ý quan trọng:</h4>
+            <ul class="space-y-2 text-sm">
+                <li class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
+                    <span>Lãi suất năm đầu tiên là 7,5%, từ năm thứ 2 trở đi là 12%.</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
+                    <span>Bảng trả góp trên là dự tính, có thể thay đổi tùy theo chính sách của ngân hàng tại thời điểm phê duyệt.</span>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-2"></i>
+                    <span>Chi phí trả lãi trước hạn: 2% năm đầu tiên; 1% năm thứ hai; 0% từ năm thứ 3 trở đi.</span>
+                </li>
+            </ul>
+        </div>`;
 
-        scheduleHTML += `
-            <tr class="${rowClass} hover:bg-gray-50 transition-colors" data-term-type="${termType}">
-                <td class="table-cell font-medium">
-                    ${
-                        term === 24
-                            ? '<span class="badge badge-recommended mr-2">Đề xuất</span>'
-                            : ""
-                    }
-                    <span class="font-semibold">${term}</span> tháng
-                </td>
-                <td class="table-cell font-medium text-accent">${formatCurrency(
-                    avgMonthlyInterest
-                )}</td>
-                <td class="table-cell font-medium text-gray-900">${formatCurrency(
-                    monthlyPrincipal
-                )}</td>
-                <td class="table-cell font-medium text-primary">${formatCurrency(
-                    avgMonthlyPayment
-                )}</td>
-                <td class="table-cell">${formatCurrency(
-                    termData.totalPayments
-                )}</td>
-                <td class="table-cell">
-                    <button class="view-details-btn bg-blue-50 hover:bg-blue-100 text-blue-700 py-1 px-2 rounded text-xs font-medium transition-colors flex items-center" 
-                            data-term="${term}">
-                        <i class="fas fa-chart-line mr-1"></i>
-                        Chi tiết
-                    </button>
-                </td>
-            </tr>
-        `;
-    }
+        // Reset button state
+        loadingIndicator.classList.add("hidden");
+        calculatorIcon.classList.remove("hidden");
+        button.disabled = false;
 
-    scheduleHTML += `
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-
-    // Add the term details modal separately to body, not within the schedule HTML
-    let modalHTML = `
-        <!-- Term Details Modal with improved positioning -->
-        <div id="term-details-modal" class="hidden">
-            <div class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-[9999]"></div>
-            <div class="modal-container fixed inset-0 z-[10000] overflow-y-auto">
-                <div class="flex min-h-full items-center justify-center p-4">
-                    <div class="bg-white rounded-lg shadow-2xl w-full max-w-4xl transform transition-all">
-                        <div class="bg-primary text-white flex justify-between items-center p-4 rounded-t-lg">
-                            <h3 class="text-lg font-semibold" id="modal-title">Chi tiết thanh toán</h3>
-                            <button id="close-modal" class="text-white hover:text-gray-200">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="p-4 max-h-[70vh] overflow-y-auto" id="modal-content">
-                            <!-- Content will be filled by JavaScript -->
-                        </div>
-                        <div class="border-t p-4 bg-gray-50 flex justify-end rounded-b-lg">
-                            <button id="close-modal-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md transition-colors duration-200">
-                                Đóng
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Update the DOM with the calculated results
-    const resultSummary = document.getElementById("result-summary");
-    if (resultSummary) {
-        resultSummary.innerHTML = resultHTML;
-    }
-    document.getElementById("payment-schedule").innerHTML = scheduleHTML;
-
-    // Append modal HTML to body if it doesn't exist already
-    if (!document.getElementById("term-details-modal")) {
-        document.body.insertAdjacentHTML("beforeend", modalHTML);
-    }
-
-    // Show the payment schedule container
-    document.getElementById("payment-schedule-container").style.display =
-        "block";
-
-    // Trigger animation after a small delay
-    setTimeout(() => {
-        const resultElement = document.getElementById("result");
-        if (resultElement) {
-            resultElement.classList.remove("opacity-0", "-translate-y-4");
-        }
-    }, 50);
-
-    // Setup term details modal
-    setupTermDetailsModal(allTermPayments, remainingPayment);
-
-    // Setup term filter buttons
-    setupTermFilterButtons();
+        // Scroll to payment schedule
+        paymentScheduleContainer.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+        });
+    }, 1200); // Simulate a calculation delay of 1.2 seconds
 };
 
 // Term details modal functions
@@ -1282,8 +1044,6 @@ function updateDownPaymentIndicator() {
             // Change color based on percentage
             if (displayPercentage < 20) {
                 progressValue.style.backgroundColor = "#ef4444"; // Red for less than minimum
-            } else if (displayPercentage < 50) {
-                progressValue.style.backgroundColor = "#f59e0b"; // Amber for less than 50%
             } else {
                 progressValue.style.backgroundColor = ""; // Default green gradient for 50%+
             }
@@ -1507,3 +1267,362 @@ const setupTermDetailsModal = (allTermPayments, totalLoanAmount) => {
         }
     });
 };
+
+// Format currency input - Đổi tên từ formatCurrency để tránh xung đột
+function formatCurrencyInput(input) {
+    // Remove all non-digit characters
+    let value = input.value.replace(/[^\d]/g, "");
+
+    // Format with commas
+    if (value.length > 0) {
+        value = parseInt(value).toLocaleString("vi-VN");
+    }
+
+    input.value = value;
+    return value;
+}
+
+// Validate monthly income
+function validateMonthlyIncome(input) {
+    const errorElement = document.getElementById("monthlyIncome-error");
+    const checkLimitBtn = document.getElementById("checkLimitBtn");
+    const validIcon = document.getElementById("monthly-income-valid");
+
+    // Extract numeric value
+    const value = parseInt(input.value.replace(/[^\d]/g, "") || 0);
+    const minIncome = 9000000; // 9 million VND
+
+    if (value < minIncome) {
+        errorElement.classList.remove("hidden");
+        checkLimitBtn.disabled = true;
+        checkLimitBtn.classList.add("opacity-50", "cursor-not-allowed");
+        validIcon.classList.add("hidden");
+
+        // Add visual indication to the input field
+        input.classList.add("border-red-500", "bg-red-50");
+
+        // Update UI to show validation error
+        input.classList.remove("border-green-500");
+        input.classList.add("border-red-500");
+
+        // Show error tooltip if needed
+        errorElement.textContent = `Thu nhập hàng tháng phải từ ${minIncome.toLocaleString(
+            "vi-VN"
+        )}đ trở lên`;
+        errorElement.classList.remove("hidden");
+
+        return false;
+    } else {
+        errorElement.classList.add("hidden");
+        checkLimitBtn.disabled = false;
+        checkLimitBtn.classList.remove("opacity-50", "cursor-not-allowed");
+        validIcon.classList.remove("hidden");
+
+        // Remove visual indication
+        input.classList.remove("border-red-500", "bg-red-50");
+
+        // Update UI to show validation success
+        input.classList.remove("border-red-500");
+        input.classList.add("border-green-500");
+
+        // Hide error tooltip
+        errorElement.classList.add("hidden");
+
+        if (value >= 15000000) {
+            input.classList.add("border-green-500", "bg-green-50");
+            setTimeout(() => {
+                input.classList.remove("border-green-500", "bg-green-50");
+            }, 2000);
+        }
+
+        return true;
+    }
+}
+
+// Validate down payment
+function validateDownPayment() {
+    const contractValueInput = document.getElementById("contractValue");
+    const downPaymentInput = document.getElementById("downPayment");
+    const errorElement = document.getElementById("downPayment-error");
+    const suggestionElement = document.getElementById("downPayment-suggestion");
+    const calculateBtn = document.querySelector(
+        'button[onclick="calculateInstallmentPayment()"]'
+    );
+    const validContractIcon = document.getElementById("contract-value-valid");
+    const validDownPaymentIcon = document.getElementById("down-payment-valid");
+
+    // Extract contract value
+    const contractValue = parseInt(
+        contractValueInput.value.replace(/[^\d]/g, "") || 0
+    );
+
+    // Extract down payment value
+    const downPayment = parseInt(
+        downPaymentInput.value.replace(/[^\d]/g, "") || 0
+    );
+
+    // Validate contract value first
+    if (contractValue >= 10000000) {
+        validContractIcon.classList.remove("hidden");
+        contractValueInput.classList.remove("border-red-500", "bg-red-50");
+        contractValueInput.classList.add("border-green-500");
+    } else {
+        validContractIcon.classList.add("hidden");
+        contractValueInput.classList.remove("border-green-500");
+        if (contractValue > 0) {
+            contractValueInput.classList.add("border-red-500", "bg-red-50");
+        }
+    }
+
+    // If contract value is not set yet, don't validate
+    if (contractValue === 0) {
+        calculateBtn.disabled = true;
+        return;
+    }
+
+    // Calculate percentage
+    const percentage = (downPayment / contractValue) * 100;
+
+    // Update percentage display
+    const percentElement = document.getElementById("downPaymentPercent");
+    percentElement.textContent = Math.round(percentage) + "%";
+
+    // Update progress bar
+    const progressBar = document.getElementById("downPayment-progress");
+    // Constrain to 0-100% for display purposes
+    const displayPercentage = Math.min(100, Math.max(0, percentage));
+    progressBar.style.width = displayPercentage + "%";
+
+    // Validate 40-80% range
+    if (percentage < 40 || percentage > 80) {
+        errorElement.classList.remove("hidden");
+        calculateBtn.disabled = true;
+        calculateBtn.classList.add("opacity-50", "cursor-not-allowed");
+        downPaymentInput.classList.add("border-red-500", "bg-red-50");
+        downPaymentInput.classList.remove("border-green-500");
+        validDownPaymentIcon.classList.add("hidden");
+
+        // Show suggestion
+        suggestionElement.classList.remove("hidden");
+
+        // Change progress bar color based on range
+        if (percentage < 40) {
+            progressBar.style.backgroundColor = "#f87171"; // red
+            percentElement.classList.add("text-red-500");
+            percentElement.classList.remove("text-accent", "bg-accent/10");
+
+            // Calculate min value
+            const minValue = Math.ceil(contractValue * 0.4);
+            document.getElementById(
+                "suggested-amount"
+            ).textContent = `Số tiền trả trước tối thiểu là ${minValue.toLocaleString(
+                "vi-VN"
+            )}đ`;
+
+            // Offer to auto-correct
+            document.getElementById(
+                "suggested-amount"
+            ).innerHTML = `Số tiền trả trước tối thiểu là ${minValue.toLocaleString(
+                "vi-VN"
+            )}đ 
+                <button onclick="applyMinDownPayment()" class="text-blue-500 underline ml-1">
+                    Áp dụng giá trị này
+                </button>`;
+        } else if (percentage > 80) {
+            progressBar.style.backgroundColor = "#f87171"; // red
+            percentElement.classList.add("text-red-500");
+            percentElement.classList.remove("text-accent", "bg-accent/10");
+
+            // Calculate max value
+            const maxValue = Math.floor(contractValue * 0.8);
+            document.getElementById(
+                "suggested-amount"
+            ).innerHTML = `Số tiền trả trước tối đa là ${maxValue.toLocaleString(
+                "vi-VN"
+            )}đ
+                <button onclick="applyMaxDownPayment()" class="text-blue-500 underline ml-1">
+                    Áp dụng giá trị này
+                </button>`;
+        }
+
+        return false;
+    } else {
+        errorElement.classList.add("hidden");
+        suggestionElement.classList.add("hidden");
+
+        // Enable calculate button when down payment is valid, without checking monthly income
+        calculateBtn.disabled = false;
+        calculateBtn.classList.remove("opacity-50", "cursor-not-allowed");
+
+        downPaymentInput.classList.remove("border-red-500", "bg-red-50");
+        downPaymentInput.classList.add("border-green-500");
+        validDownPaymentIcon.classList.remove("hidden");
+        progressBar.style.backgroundColor = ""; // Reset to default
+        percentElement.classList.remove("text-red-500");
+        percentElement.classList.add("text-accent", "bg-accent/10");
+
+        if (percentage >= 45 && percentage <= 75) {
+            downPaymentInput.classList.add("border-green-500", "bg-green-50");
+            setTimeout(() => {
+                downPaymentInput.classList.remove(
+                    "border-green-500",
+                    "bg-green-50"
+                );
+            }, 2000);
+        }
+
+        return true;
+    }
+}
+
+// Function to apply minimum down payment
+function applyMinDownPayment() {
+    const contractValueInput = document.getElementById("contractValue");
+    const downPaymentInput = document.getElementById("downPayment");
+    const contractValue = parseInt(
+        contractValueInput.value.replace(/[^\d]/g, "") || 0
+    );
+
+    if (contractValue > 0) {
+        const minValue = Math.ceil(contractValue * 0.4);
+        downPaymentInput.value = minValue.toLocaleString("vi-VN");
+        validateDownPayment();
+    }
+}
+
+// Function to apply maximum down payment
+function applyMaxDownPayment() {
+    const contractValueInput = document.getElementById("contractValue");
+    const downPaymentInput = document.getElementById("downPayment");
+    const contractValue = parseInt(
+        contractValueInput.value.replace(/[^\d]/g, "") || 0
+    );
+
+    if (contractValue > 0) {
+        const maxValue = Math.floor(contractValue * 0.8);
+        downPaymentInput.value = maxValue.toLocaleString("vi-VN");
+        validateDownPayment();
+    }
+}
+
+function closeResults() {
+    // Animate the results card out
+    const resultsCard = document.getElementById("resultsCard");
+    const resultsModal = document.getElementById("calculationResults");
+
+    resultsCard.classList.add("opacity-0", "translate-y-8");
+
+    // Wait for animation to complete before hiding the modal
+    setTimeout(() => {
+        resultsModal.classList.add("hidden");
+    }, 300);
+}
+
+// Add event listeners
+document.addEventListener("DOMContentLoaded", function () {
+    // Update down payment when contract value changes
+    if (document.getElementById("contractValue")) {
+        document
+            .getElementById("contractValue")
+            .addEventListener("input", function () {
+                const contractValue = parseInt(
+                    this.value.replace(/[^\d]/g, "") || 0
+                );
+                const downPaymentInput = document.getElementById("downPayment");
+
+                // If down payment is empty or invalid, set it to 40% of contract value
+                const currentDownPayment = parseInt(
+                    downPaymentInput.value.replace(/[^\d]/g, "") || 0
+                );
+                if (
+                    (currentDownPayment === 0 ||
+                        this.value.length > downPaymentInput.value.length) &&
+                    contractValue > 0
+                ) {
+                    const defaultDownPayment = Math.round(contractValue * 0.4);
+                    downPaymentInput.value =
+                        defaultDownPayment.toLocaleString("vi-VN");
+                }
+
+                validateDownPayment();
+            });
+    }
+
+    // Setup improved animations for user interactions
+    const setupInputAnimations = () => {
+        const inputs = document.querySelectorAll("input");
+
+        inputs.forEach((input) => {
+            // Focus animation
+            input.addEventListener("focus", () => {
+                input.classList.add(
+                    "ring-2",
+                    "ring-primary/20",
+                    "border-primary"
+                );
+            });
+
+            // Blur animation
+            input.addEventListener("blur", () => {
+                input.classList.remove(
+                    "ring-2",
+                    "ring-primary/20",
+                    "border-primary"
+                );
+
+                // Validate on blur
+                if (input.id === "monthlyIncome") {
+                    validateMonthlyIncome(input);
+                } else if (input.id === "contractValue") {
+                    validateDownPayment();
+                } else if (input.id === "downPayment") {
+                    validateDownPayment();
+                }
+            });
+        });
+    };
+
+    // Initialize animations
+    setupInputAnimations();
+
+    // Initial validations
+    const monthlyIncomeInput = document.getElementById("monthlyIncome");
+    const contractValueInput = document.getElementById("contractValue");
+    const downPaymentInput = document.getElementById("downPayment");
+
+    // Add placeholder values for better UX
+    if (monthlyIncomeInput && !monthlyIncomeInput.value) {
+        monthlyIncomeInput.placeholder = "Tối thiểu 9,000,000đ";
+    }
+
+    if (contractValueInput && !contractValueInput.value) {
+        contractValueInput.placeholder = "Nhập tổng giá trị hệ thống";
+    }
+
+    if (downPaymentInput && !downPaymentInput.value) {
+        downPaymentInput.placeholder = "Từ 40% đến 80% giá trị hệ thống";
+    }
+
+    // Initialize validation on startup
+    if (monthlyIncomeInput && monthlyIncomeInput.value) {
+        validateMonthlyIncome(monthlyIncomeInput);
+    }
+
+    if (
+        contractValueInput &&
+        downPaymentInput &&
+        contractValueInput.value &&
+        downPaymentInput.value
+    ) {
+        validateDownPayment();
+    }
+
+    // Disable calculate button initially
+    const calculateBtn = document.querySelector(
+        'button[onclick="calculateInstallmentPayment()"]'
+    );
+    if (calculateBtn) {
+        calculateBtn.disabled = true;
+        calculateBtn.classList.add("opacity-50", "cursor-not-allowed");
+    }
+});
