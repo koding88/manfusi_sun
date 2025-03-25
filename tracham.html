@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Tính toán trả góp dự án</title>
+        <title>Tính toán Trả góp Hệ thống Điện Mặt Trời - Manfusi Solar</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link
             rel="stylesheet"
@@ -127,23 +127,171 @@
                 }
 
                 .input-field {
-                    @apply w-full p-3 border border-gray-300 rounded-lg text-lg font-bold 
-                           focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 
-                           shadow-sm transition-all duration-300;
+                    position: relative;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 0.5rem;
+                    padding: 0.75rem 1rem;
+                    padding-right: 3rem; /* Space for validation icon */
+                    width: 100%;
+                    transition: all 0.3s ease;
+                    background-color: #fff;
+                    font-size: 0.95rem;
+                }
+
+                .input-field:focus {
+                    border-color: #83bf38;
+                    box-shadow: 0 0 0 3px rgba(131, 191, 56, 0.2);
+                    outline: none;
+                }
+
+                .input-field.is-valid {
+                    border-color: #83bf38;
+                    background-color: #f0fff4;
+                }
+
+                .input-field.is-invalid {
+                    border-color: #f56565;
+                    background-color: #fff5f5;
+                }
+
+                .validation-icon {
+                    position: absolute;
+                    right: 2.5rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    font-size: 1.2rem;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                }
+
+                .validation-icon.valid {
+                    color: #83bf38;
+                }
+
+                .validation-icon.invalid {
+                    color: #f56565;
+                }
+
+                .input-field.is-valid + .validation-icon.valid {
+                    opacity: 1;
+                }
+
+                .input-field.is-invalid + .validation-icon.invalid {
+                    opacity: 1;
+                }
+
+                .error-message {
+                    color: #f56565;
+                    font-size: 0.85rem;
+                    margin-top: 0.5rem;
+                    opacity: 0;
+                    height: 0;
+                    overflow: hidden;
+                    transition: all 0.3s ease;
+                }
+
+                .input-field.is-invalid ~ .error-message {
+                    opacity: 1;
+                    height: auto;
+                    overflow: visible;
+                    padding-bottom: 0.5rem;
+                }
+
+                .progress-bar {
+                    width: 100%;
+                    height: 6px;
+                    background-color: #edf2f7;
+                    border-radius: 999px;
+                    overflow: hidden;
+                }
+
+                .progress-value {
+                    height: 100%;
+                    border-radius: 999px;
+                    background: linear-gradient(to right, #0056b3, #83bf38);
+                    transition: width 0.3s ease, background-color 0.3s ease;
+                }
+
+                .progress-value.invalid {
+                    background: linear-gradient(to right, #f56565, #f6ad55);
                 }
 
                 .btn-primary {
-                    @apply bg-gradient-to-r from-accent to-accent/90 text-white font-semibold 
-                           py-4 px-4 rounded-lg transition transform 
-                           hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] 
-                           shadow-md flex justify-center items-center gap-2;
+                    background-color: #0056b3;
+                    color: white;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 0.5rem;
+                    font-weight: 500;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.3s ease;
+                    border: none;
+                    cursor: pointer;
+                    box-shadow: 0 2px 4px rgba(0, 86, 179, 0.2);
+                }
+
+                .btn-primary:hover {
+                    background-color: #003d82;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 6px rgba(0, 86, 179, 0.25);
+                }
+
+                .btn-primary:active {
+                    transform: translateY(0);
+                    box-shadow: 0 1px 2px rgba(0, 86, 179, 0.2);
+                }
+
+                .btn-primary:disabled {
+                    background-color: #a0aec0;
+                    cursor: not-allowed;
+                    transform: none;
+                    box-shadow: none;
+                }
+
+                .loading-icon {
+                    display: inline-block;
+                    width: 1rem;
+                    height: 1rem;
+                    border: 2px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 50%;
+                    border-top-color: white;
+                    animation: spin 1s ease-in-out infinite;
+                    margin-right: 0.5rem;
+                    opacity: 0;
+                }
+
+                .btn-loading .loading-icon {
+                    opacity: 1;
+                }
+
+                @keyframes spin {
+                    to {
+                        transform: rotate(360deg);
+                    }
                 }
 
                 .btn-secondary {
-                    @apply bg-gradient-to-r from-primary to-secondary text-white font-semibold 
-                           py-3 px-4 rounded-lg transition transform 
-                           hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] 
-                           shadow-md flex justify-center items-center gap-2;
+                    background: linear-gradient(to right, #0056b3, #003d82);
+                    color: white;
+                    font-weight: 600;
+                    padding: 0.75rem 1rem;
+                    border-radius: 0.5rem;
+                    transition: all 0.3s ease;
+                    transform: translateZ(0);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                .btn-secondary:hover {
+                    transform: scale(1.02);
+                    box-shadow: 0 4px 6px rgba(0, 86, 179, 0.25);
+                }
+
+                .btn-secondary:active {
+                    transform: scale(0.98);
                 }
 
                 .tooltip {
@@ -190,34 +338,24 @@
                     transform: translateY(0);
                 }
 
-                .progress-bar {
-                    position: relative;
-                    height: 0.5rem;
-                    background-color: #e5e7eb;
-                    border-radius: 9999px;
-                    overflow: hidden;
-                }
-
-                .progress-value {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    height: 100%;
-                    background: linear-gradient(to right, #83bf38, #28a745);
-                    transition: width 0.5s ease;
-                    border-radius: 9999px;
-                }
-
                 .table-header {
-                    @apply py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+                    padding: 0.75rem 1rem;
+                    text-align: left;
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    color: #6b7280;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
                 }
 
                 .table-cell {
-                    @apply py-3 px-4;
+                    padding: 0.75rem 1rem;
                 }
 
                 .decorated-heading {
-                    @apply relative inline-flex items-center;
+                    position: relative;
+                    display: inline-flex;
+                    align-items: center;
                 }
 
                 .decorated-heading::before {
@@ -315,10 +453,189 @@
                     background: rgba(131, 191, 56, 0.2);
                     box-shadow: 0 0 10px rgba(131, 191, 56, 0.3);
                 }
+
+                .floating-circle {
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(131, 191, 56, 0.08);
+                    filter: blur(1px);
+                    z-index: -1;
+                    animation: float 8s ease-in-out infinite;
+                }
+
+                .floating-icon-bg {
+                    position: absolute;
+                    opacity: 0.15;
+                    z-index: 0;
+                    animation: float 6s ease-in-out infinite;
+                }
+
+                @keyframes float {
+                    0%,
+                    100% {
+                        transform: translateY(0);
+                    }
+                    50% {
+                        transform: translateY(-10px);
+                    }
+                }
+
+                .animate-glow {
+                    animation: glow 3s ease-in-out infinite;
+                }
+
+                @keyframes glow {
+                    0%,
+                    100% {
+                        box-shadow: 0 0 5px rgba(131, 191, 56, 0.2);
+                    }
+                    50% {
+                        box-shadow: 0 0 20px rgba(131, 191, 56, 0.4);
+                    }
+                }
+
+                .btn-shine {
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .btn-shine::after {
+                    content: "";
+                    position: absolute;
+                    top: -50%;
+                    left: -50%;
+                    width: 200%;
+                    height: 200%;
+                    background: linear-gradient(
+                        to right,
+                        rgba(255, 255, 255, 0) 0%,
+                        rgba(255, 255, 255, 0.3) 50%,
+                        rgba(255, 255, 255, 0) 100%
+                    );
+                    transform: rotate(30deg);
+                    transition: transform 0.6s;
+                    opacity: 0;
+                }
+
+                .btn-shine:hover::after {
+                    opacity: 1;
+                    animation: shine 1.5s infinite;
+                }
+
+                @keyframes shine {
+                    0% {
+                        transform: translateX(-100%) rotate(30deg);
+                    }
+                    100% {
+                        transform: translateX(100%) rotate(30deg);
+                    }
+                }
+
+                .card-hover-effect {
+                    transition: all 0.3s ease;
+                }
+
+                .card-hover-effect:hover {
+                    transform: translateY(-5px) !important;
+                    box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.1),
+                        0 4px 8px -2px rgba(0, 0, 0, 0.05);
+                }
+
+                .icon-hover-effect {
+                    transition: all 0.3s ease;
+                }
+
+                .icon-hover-effect:hover {
+                    transform: scale(1.1);
+                    color: theme("colors.accent");
+                }
             }
         </style>
     </head>
     <body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+        <!-- Thanh điều hướng cố định -->
+        <div
+            class="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-md z-50 py-3 px-6"
+        >
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-solar-panel text-accent text-xl"></i>
+                    <span class="font-bold text-primary">Manfusi Solar</span>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <a
+                        href="#"
+                        class="text-gray-600 hover:text-accent transition-colors text-sm font-medium"
+                    >
+                        Trang chủ
+                    </a>
+                    <div class="relative group">
+                        <div
+                            class="flex items-center gap-1 text-gray-600 group-hover:text-accent transition-colors text-sm font-medium cursor-pointer"
+                        >
+                            Dịch vụ
+                            <i class="fas fa-chevron-down text-xs ml-1"></i>
+                        </div>
+                        <div
+                            class="absolute top-full left-0 mt-1 bg-white shadow-lg rounded-lg py-2 px-4 min-w-[200px] hidden group-hover:block"
+                        >
+                            <a
+                                href="#"
+                                class="block py-2 text-gray-600 hover:text-accent transition-colors text-sm"
+                            >
+                                Tư vấn thiết kế
+                            </a>
+                            <a
+                                href="#"
+                                class="block py-2 text-gray-600 hover:text-accent transition-colors text-sm"
+                            >
+                                Lắp đặt
+                            </a>
+                            <a
+                                href="#"
+                                class="block py-2 text-gray-600 hover:text-accent transition-colors text-sm"
+                            >
+                                Bảo trì
+                            </a>
+                        </div>
+                    </div>
+                    <a
+                        href="#"
+                        class="text-gray-600 hover:text-accent transition-colors text-sm font-medium"
+                    >
+                        Về chúng tôi
+                    </a>
+                    <a
+                        href="#"
+                        class="text-gray-600 hover:text-accent transition-colors text-sm font-medium"
+                    >
+                        Liên hệ
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <a
+                        href="index.html"
+                        class="px-4 py-2 bg-white text-primary border border-primary/20 rounded-lg hover:border-primary transition-all font-medium text-sm flex items-center"
+                    >
+                        <i class="fas fa-credit-card mr-2"></i>
+                        Trả thẳng
+                    </a>
+                    <a
+                        href="tracham.html"
+                        class="px-4 py-2 bg-accent/10 text-accent rounded-lg font-medium text-sm flex items-center"
+                    >
+                        <i class="fas fa-calendar-alt mr-2"></i>
+                        Trả góp
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khoảng trống cho fixed navbar -->
+        <div class="h-16"></div>
+
         <div class="relative mx-auto overflow-hidden">
             <!-- Decorative Shapes -->
             <div
@@ -341,6 +658,32 @@
                 <header
                     class="relative hero-gradient rounded-2xl p-8 mb-10 shadow-lg overflow-hidden"
                 >
+                    <!-- Decorative elements -->
+                    <div
+                        class="floating-icon-bg text-accent text-4xl"
+                        style="top: 10%; left: 10%; animation-delay: 0s"
+                    >
+                        <i class="fas fa-sun"></i>
+                    </div>
+                    <div
+                        class="floating-icon-bg text-primary text-3xl"
+                        style="top: 15%; right: 15%; animation-delay: 1s"
+                    >
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div
+                        class="floating-icon-bg text-accent text-2xl"
+                        style="bottom: 10%; left: 20%; animation-delay: 2s"
+                    >
+                        <i class="fas fa-solar-panel"></i>
+                    </div>
+                    <div
+                        class="floating-icon-bg text-primary text-3xl"
+                        style="bottom: 15%; right: 10%; animation-delay: 3s"
+                    >
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+
                     <div class="orbit orbit-inner"></div>
                     <div class="orbit orbit-outer"></div>
                     <div
@@ -361,20 +704,22 @@
                                     class="flex justify-center items-center w-14 h-14 rounded-full bg-accent/10 mr-4"
                                 >
                                     <i
-                                        class="fas fa-calculator text-accent text-2xl rotating-icon"
+                                        class="fas fa-solar-panel text-accent text-2xl rotating-icon"
                                     ></i>
                                 </div>
                                 <h1 class="text-4xl font-bold">
-                                    <span class="text-primary">Tính toán</span>
-                                    <span class="text-accent">Trả góp</span>
+                                    <span class="text-primary"
+                                        >Điện Mặt Trời</span
+                                    >
+                                    <span class="text-accent">Trả Góp</span>
                                 </h1>
                             </div>
                             <p class="text-gray-600 text-lg mb-4 max-w-xl">
                                 Công cụ tính toán linh hoạt giúp bạn lập kế
-                                hoạch tài chính cho dự án đầu tư với nhiều
-                                phương án trả góp.
+                                hoạch tài chính cho hệ thống điện mặt trời với
+                                nhiều phương án trả góp từ Manfusi Solar.
                             </p>
-                            <div class="flex flex-wrap gap-3">
+                            <div class="flex flex-wrap gap-3 mb-4">
                                 <span class="badge badge-primary">
                                     <i class="fas fa-calculator mr-1"></i> Kỳ
                                     hạn linh hoạt
@@ -388,12 +733,20 @@
                                     phí rõ ràng
                                 </span>
                             </div>
+
+                            <a
+                                href="index.html"
+                                class="inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-lg shadow-md hover:bg-primary/90 transition-all btn-shine"
+                            >
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Quay lại trang tính toán trả thẳng
+                            </a>
                         </div>
                         <div class="relative">
                             <div class="w-40 h-40 floating-icon">
                                 <img
-                                    src="https://cdn-icons-png.flaticon.com/512/2660/2660573.png"
-                                    alt="Financial planning"
+                                    src="https://cdn-icons-png.flaticon.com/512/4051/4051072.png"
+                                    alt="Solar panels financial planning"
                                     class="w-full h-auto"
                                 />
                             </div>
@@ -435,7 +788,7 @@
                                         ></i>
                                         <span class="tooltiptext"
                                             >Tổng thu nhập bình quân mỗi tháng
-                                            của bạn.</span
+                                            của bạn. Tối thiểu 9,000,000đ.</span
                                         >
                                     </span>
                                 </label>
@@ -444,24 +797,48 @@
                                         type="text"
                                         id="monthlyIncome"
                                         placeholder="Ví dụ: 10,000,000đ"
-                                        class="input-field pl-10"
+                                        class="input-field pl-10 pr-16"
+                                        oninput="formatCurrency(this); validateMonthlyIncome(this);"
                                     />
                                     <span
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
                                     >
                                         <i class="fas fa-money-bill-wave"></i>
                                     </span>
+                                    <div
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
+                                    >
+                                        VNĐ
+                                    </div>
+                                    <div
+                                        id="monthly-income-valid"
+                                        class="absolute right-12 top-1/2 -translate-y-1/2 text-green-500 hidden"
+                                    >
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
                                 </div>
                                 <small class="block mt-1 text-gray-600 text-sm">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    Nhập tổng thu nhập bình quân hàng tháng
+                                    Nhập tổng thu nhập bình quân hàng tháng (tối
+                                    thiểu 9 triệu đồng)
                                 </small>
+                                <div
+                                    id="monthlyIncome-error"
+                                    class="hidden mt-2 text-red-500 text-sm font-medium animate-pulse"
+                                >
+                                    <i
+                                        class="fas fa-exclamation-circle mr-1"
+                                    ></i>
+                                    Thu nhập hàng tháng phải từ 9,000,000đ trở
+                                    lên
+                                </div>
                             </div>
 
                             <div class="flex justify-center">
                                 <button
                                     onclick="calculateCreditLimit()"
-                                    class="btn-primary w-full"
+                                    class="btn-primary w-full btn-shine"
+                                    id="checkLimitBtn"
                                 >
                                     <i class="fas fa-search-dollar text-lg"></i>
                                     Kiểm tra hạn mức
@@ -491,7 +868,7 @@
                             >
                                 <div class="mb-4 relative w-24 h-24 mx-auto">
                                     <div
-                                        class="absolute inset-0 bg-primary/10 rounded-full pulsing-icon"
+                                        class="absolute inset-0 bg-primary/10 rounded-full pulsing-icon animate-glow"
                                     ></div>
                                     <i
                                         class="fas fa-credit-card text-5xl text-primary absolute inset-0 flex items-center justify-center"
@@ -555,15 +932,16 @@
                                     <i
                                         class="fas fa-money-bill-wave text-accent mr-2"
                                     ></i>
-                                    Tổng tiền dự án
+                                    Tổng chi phí hệ thống điện mặt trời
                                     <span class="text-accent ml-1">*</span>
                                     <span class="tooltip ml-2">
                                         <i
                                             class="fas fa-question-circle text-gray-500"
                                         ></i>
                                         <span class="tooltiptext"
-                                            >Tổng chi phí của dự án đầu tư, bao
-                                            gồm tất cả các phần.</span
+                                            >Tổng chi phí của hệ thống điện mặt
+                                            trời, bao gồm thiết bị, lắp đặt và
+                                            các phụ kiện đi kèm.</span
                                         >
                                     </span>
                                 </label>
@@ -572,13 +950,25 @@
                                         type="text"
                                         id="contractValue"
                                         placeholder="Ví dụ: 108,000,000đ"
-                                        class="input-field pl-10"
+                                        class="input-field pl-10 pr-16"
+                                        oninput="formatCurrency(this); validateDownPayment();"
                                     />
                                     <span
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
                                     >
                                         <i class="fas fa-donate"></i>
                                     </span>
+                                    <div
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
+                                    >
+                                        VNĐ
+                                    </div>
+                                    <div
+                                        id="contract-value-valid"
+                                        class="absolute right-12 top-1/2 -translate-y-1/2 text-green-500 hidden"
+                                    >
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
                                 </div>
                                 <small class="block mt-1 text-gray-600 text-sm">
                                     <i class="fas fa-info-circle mr-1"></i>
@@ -602,7 +992,8 @@
                                         ></i>
                                         <span class="tooltiptext"
                                             >Số tiền bạn muốn trả trước, tối
-                                            thiểu 20% tổng giá trị dự án.</span
+                                            thiểu 40% và tối đa 80% tổng giá trị
+                                            dự án.</span
                                         >
                                     </span>
                                 </label>
@@ -610,14 +1001,26 @@
                                     <input
                                         type="text"
                                         id="downPayment"
-                                        placeholder="Ví dụ: 21,600,000đ"
-                                        class="input-field pl-10"
+                                        placeholder="Ví dụ: 43,200,000đ"
+                                        class="input-field pl-10 pr-16"
+                                        oninput="formatCurrency(this); validateDownPayment();"
                                     />
                                     <span
                                         class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
                                     >
                                         <i class="fas fa-piggy-bank"></i>
                                     </span>
+                                    <div
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"
+                                    >
+                                        VNĐ
+                                    </div>
+                                    <div
+                                        id="down-payment-valid"
+                                        class="absolute right-12 top-1/2 -translate-y-1/2 text-green-500 hidden"
+                                    >
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
                                 </div>
 
                                 <!-- Down payment slider/percentage indicator -->
@@ -625,31 +1028,89 @@
                                     <div
                                         class="flex justify-between text-sm mb-1"
                                     >
-                                        <span>20% (Tối thiểu)</span>
-                                        <span id="downPaymentPercent">20%</span>
-                                        <span>100%</span>
+                                        <span class="text-red-500"
+                                            >40% (Tối thiểu)</span
+                                        >
+                                        <span
+                                            id="downPaymentPercent"
+                                            class="px-3 py-1 bg-accent/10 rounded-full text-accent font-medium"
+                                            >40%</span
+                                        >
+                                        <span class="text-red-500"
+                                            >80% (Tối đa)</span
+                                        >
                                     </div>
                                     <div class="progress-bar">
                                         <div
                                             class="progress-value"
-                                            style="width: 20%"
+                                            id="downPayment-progress"
+                                            style="width: 40%"
                                         ></div>
                                     </div>
                                 </div>
 
                                 <small class="block mt-1 text-gray-600 text-sm">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    Trả trước tối thiểu 20% tổng giá trị dự án
+                                    Trả trước tối thiểu 40% và tối đa 80% tổng
+                                    giá trị dự án
                                 </small>
+                                <div
+                                    id="downPayment-error"
+                                    class="hidden mt-2 text-red-500 text-sm font-medium animate-pulse"
+                                >
+                                    <i
+                                        class="fas fa-exclamation-circle mr-1"
+                                    ></i>
+                                    Số tiền trả trước phải từ 40% đến 80% tổng
+                                    giá trị dự án
+                                </div>
+                                <div
+                                    id="downPayment-suggestion"
+                                    class="hidden mt-2 text-accent text-sm"
+                                >
+                                    <i class="fas fa-lightbulb mr-1"></i>
+                                    <span id="suggested-amount"></span>
+                                </div>
                             </div>
 
                             <div class="flex justify-center">
                                 <button
                                     onclick="calculateInstallmentPayment()"
-                                    class="btn-primary w-full"
+                                    class="btn-shine py-3 px-6 bg-accent text-white rounded-lg shadow-lg hover:bg-accent/90 transition-all duration-300 w-full"
+                                    disabled
                                 >
-                                    <i class="fas fa-calculator text-lg"></i>
-                                    Tính toán
+                                    <div
+                                        class="flex items-center justify-center"
+                                    >
+                                        <span>Tính toán khoản vay</span>
+                                        <i
+                                            class="fas fa-calculator ml-2 animate-bounce"
+                                        ></i>
+                                        <span
+                                            class="loading-indicator hidden ml-2"
+                                        >
+                                            <svg
+                                                class="animate-spin h-5 w-5 text-white"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <circle
+                                                    class="opacity-25"
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                    stroke="currentColor"
+                                                    stroke-width="4"
+                                                ></circle>
+                                                <path
+                                                    class="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                ></path>
+                                            </svg>
+                                        </span>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -676,7 +1137,7 @@
                             >
                                 <div class="mb-4 relative w-24 h-24 mx-auto">
                                     <div
-                                        class="absolute inset-0 bg-accent/10 rounded-full pulsing-icon"
+                                        class="absolute inset-0 bg-accent/10 rounded-full pulsing-icon animate-glow"
                                     ></div>
                                     <i
                                         class="fas fa-calculator text-5xl text-accent absolute inset-0 flex items-center justify-center"
@@ -723,14 +1184,14 @@
 
                         <!-- Action buttons -->
                         <div class="flex flex-wrap gap-3 mt-6 justify-center">
-                            <button class="btn-secondary">
+                            <button class="btn-secondary btn-shine">
                                 <i class="fas fa-print mr-1"></i> In bảng kế
                                 hoạch
                             </button>
-                            <button class="btn-secondary">
+                            <button class="btn-secondary btn-shine">
                                 <i class="fas fa-file-pdf mr-1"></i> Xuất PDF
                             </button>
-                            <button class="btn-secondary">
+                            <button class="btn-secondary btn-shine">
                                 <i class="fas fa-share-alt mr-1"></i> Chia sẻ
                             </button>
                         </div>
@@ -746,29 +1207,30 @@
                         class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center decorated-heading"
                     >
                         <i class="fas fa-lightbulb mr-2 text-accent"></i> Tư vấn
-                        tài chính
+                        điện mặt trời trả góp
                     </h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div
-                            class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                            class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow card-hover-effect"
                         >
                             <div
                                 class="w-12 h-12 flex items-center justify-center rounded-full bg-primary/10 mb-4"
                             >
-                                <i class="fas fa-percentage text-primary"></i>
+                                <i class="fas fa-solar-panel text-primary"></i>
                             </div>
                             <h3 class="font-semibold text-lg mb-2">
-                                Tối ưu trả trước
+                                Tiết kiệm dài hạn
                             </h3>
                             <p class="text-gray-600 text-sm">
-                                Thanh toán trước tối thiểu 20% giúp giảm gánh
-                                nặng lãi phí và số tiền trả hàng tháng.
+                                Hệ thống điện mặt trời giúp tiết kiệm chi phí
+                                điện năng trong 25-30 năm, vượt xa thời gian trả
+                                góp.
                             </p>
                         </div>
 
                         <div
-                            class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                            class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow card-hover-effect"
                         >
                             <div
                                 class="w-12 h-12 flex items-center justify-center rounded-full bg-accent/10 mb-4"
@@ -780,24 +1242,25 @@
                             </h3>
                             <p class="text-gray-600 text-sm">
                                 Kỳ hạn 24 tháng thường là sự cân bằng tốt giữa
-                                số tiền trả hàng tháng và tổng chi phí lãi.
+                                số tiền trả hàng tháng và thời gian thu hồi vốn.
                             </p>
                         </div>
 
                         <div
-                            class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                            class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow card-hover-effect"
                         >
                             <div
                                 class="w-12 h-12 flex items-center justify-center rounded-full bg-highlight/10 mb-4"
                             >
-                                <i class="fas fa-piggy-bank text-highlight"></i>
+                                <i class="fas fa-bolt text-highlight"></i>
                             </div>
                             <h3 class="font-semibold text-lg mb-2">
-                                Thanh toán trước hạn
+                                Bắt đầu tiết kiệm ngay
                             </h3>
                             <p class="text-gray-600 text-sm">
-                                Thanh toán trước hạn sau 24 tháng sẽ không bị
-                                phạt phí và giúp tiết kiệm chi phí lãi.
+                                Bạn bắt đầu tiết kiệm tiền điện ngay từ tháng
+                                đầu tiên, trong khi có thể trả góp dần trong
+                                nhiều năm.
                             </p>
                         </div>
                     </div>
@@ -807,7 +1270,7 @@
                 <footer class="mt-8 text-center pt-5 border-t border-gray-200">
                     <div class="flex flex-wrap justify-center gap-4 mb-4">
                         <a
-                            href="#"
+                            href="index.html"
                             class="text-primary hover:text-accent transition-colors"
                         >
                             <i class="fas fa-home mr-1"></i> Trang chủ
@@ -832,12 +1295,693 @@
                         </a>
                     </div>
                     <p class="text-gray-500 text-sm">
-                        &copy; 2025 Trả góp dự án. Mọi quyền được bảo lưu.
+                        &copy; 2025 Manfusi Solar. Mọi quyền được bảo lưu.
                     </p>
                 </footer>
             </div>
         </div>
 
+        <div
+            class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center hidden transition-all duration-300"
+            id="calculationResults"
+        >
+            <div
+                class="bg-white rounded-xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all duration-500 opacity-0 translate-y-8"
+                id="resultsCard"
+            >
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-primary">
+                        Kết quả tính toán khoản vay
+                    </h3>
+                    <button
+                        onclick="closeResults()"
+                        class="text-gray-500 hover:text-gray-700"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="space-y-4" id="resultsContent">
+                    <!-- Results will be populated here -->
+                </div>
+                <div
+                    class="mt-6 pt-4 border-t border-gray-200 flex justify-end"
+                >
+                    <button
+                        onclick="closeResults()"
+                        class="btn-shine py-2 px-4 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg mr-2"
+                    >
+                        Đóng
+                    </button>
+                    <button
+                        onclick="window.print()"
+                        class="btn-shine py-2 px-4 bg-green-500 text-white hover:bg-green-600 rounded-lg"
+                    >
+                        <i class="fas fa-print mr-1"></i> In kết quả
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <script src="tracham.js"></script>
+        <script>
+            // Format currency input
+            function formatCurrency(input) {
+                // Remove all non-digit characters
+                let value = input.value.replace(/[^\d]/g, "");
+
+                // Format with commas
+                if (value.length > 0) {
+                    value = parseInt(value).toLocaleString("vi-VN");
+                }
+
+                input.value = value;
+                return value;
+            }
+
+            // Validate monthly income
+            function validateMonthlyIncome(input) {
+                const errorElement = document.getElementById(
+                    "monthlyIncome-error"
+                );
+                const checkLimitBtn = document.getElementById("checkLimitBtn");
+                const validIcon = document.getElementById(
+                    "monthly-income-valid"
+                );
+
+                // Extract numeric value
+                const value = parseInt(input.value.replace(/[^\d]/g, "") || 0);
+                const minIncome = 9000000; // 9 million VND
+
+                if (value < minIncome) {
+                    errorElement.classList.remove("hidden");
+                    checkLimitBtn.disabled = true;
+                    checkLimitBtn.classList.add(
+                        "opacity-50",
+                        "cursor-not-allowed"
+                    );
+                    validIcon.classList.add("hidden");
+
+                    // Add visual indication to the input field
+                    input.classList.add("border-red-500", "bg-red-50");
+
+                    // Update UI to show validation error
+                    input.classList.remove("border-green-500");
+                    input.classList.add("border-red-500");
+
+                    // Show error tooltip if needed
+                    errorElement.textContent = `Thu nhập hàng tháng phải từ ${minIncome.toLocaleString(
+                        "vi-VN"
+                    )}đ trở lên`;
+                    errorElement.classList.remove("hidden");
+
+                    return false;
+                } else {
+                    errorElement.classList.add("hidden");
+                    checkLimitBtn.disabled = false;
+                    checkLimitBtn.classList.remove(
+                        "opacity-50",
+                        "cursor-not-allowed"
+                    );
+                    validIcon.classList.remove("hidden");
+
+                    // Remove visual indication
+                    input.classList.remove("border-red-500", "bg-red-50");
+
+                    // Update UI to show validation success
+                    input.classList.remove("border-red-500");
+                    input.classList.add("border-green-500");
+
+                    // Hide error tooltip
+                    errorElement.classList.add("hidden");
+
+                    if (value >= 15000000) {
+                        input.classList.add("border-green-500", "bg-green-50");
+                        setTimeout(() => {
+                            input.classList.remove(
+                                "border-green-500",
+                                "bg-green-50"
+                            );
+                        }, 2000);
+                    }
+
+                    return true;
+                }
+            }
+
+            // Validate down payment
+            function validateDownPayment() {
+                const contractValueInput =
+                    document.getElementById("contractValue");
+                const downPaymentInput = document.getElementById("downPayment");
+                const errorElement =
+                    document.getElementById("downPayment-error");
+                const suggestionElement = document.getElementById(
+                    "downPayment-suggestion"
+                );
+                const calculateBtn = document.querySelector(
+                    'button[onclick="calculateInstallmentPayment()"]'
+                );
+                const validContractIcon = document.getElementById(
+                    "contract-value-valid"
+                );
+                const validDownPaymentIcon =
+                    document.getElementById("down-payment-valid");
+
+                // Extract contract value
+                const contractValue = parseInt(
+                    contractValueInput.value.replace(/[^\d]/g, "") || 0
+                );
+
+                // Extract down payment value
+                const downPayment = parseInt(
+                    downPaymentInput.value.replace(/[^\d]/g, "") || 0
+                );
+
+                // Validate contract value first
+                if (contractValue >= 10000000) {
+                    validContractIcon.classList.remove("hidden");
+                    contractValueInput.classList.remove(
+                        "border-red-500",
+                        "bg-red-50"
+                    );
+                    contractValueInput.classList.add("border-green-500");
+                } else {
+                    validContractIcon.classList.add("hidden");
+                    contractValueInput.classList.remove("border-green-500");
+                    if (contractValue > 0) {
+                        contractValueInput.classList.add(
+                            "border-red-500",
+                            "bg-red-50"
+                        );
+                    }
+                }
+
+                // If contract value is not set yet, don't validate
+                if (contractValue === 0) {
+                    calculateBtn.disabled = true;
+                    return;
+                }
+
+                // Calculate percentage
+                const percentage = (downPayment / contractValue) * 100;
+
+                // Update percentage display
+                const percentElement =
+                    document.getElementById("downPaymentPercent");
+                percentElement.textContent = Math.round(percentage) + "%";
+
+                // Update progress bar
+                const progressBar = document.getElementById(
+                    "downPayment-progress"
+                );
+                // Constrain to 0-100% for display purposes
+                const displayPercentage = Math.min(
+                    100,
+                    Math.max(0, percentage)
+                );
+                progressBar.style.width = displayPercentage + "%";
+
+                // Validate 40-80% range
+                if (percentage < 40 || percentage > 80) {
+                    errorElement.classList.remove("hidden");
+                    calculateBtn.disabled = true;
+                    calculateBtn.classList.add(
+                        "opacity-50",
+                        "cursor-not-allowed"
+                    );
+                    downPaymentInput.classList.add(
+                        "border-red-500",
+                        "bg-red-50"
+                    );
+                    downPaymentInput.classList.remove("border-green-500");
+                    validDownPaymentIcon.classList.add("hidden");
+
+                    // Show suggestion
+                    suggestionElement.classList.remove("hidden");
+
+                    // Change progress bar color based on range
+                    if (percentage < 40) {
+                        progressBar.style.backgroundColor = "#f87171"; // red
+                        percentElement.classList.add("text-red-500");
+                        percentElement.classList.remove(
+                            "text-accent",
+                            "bg-accent/10"
+                        );
+
+                        // Calculate min value
+                        const minValue = Math.ceil(contractValue * 0.4);
+                        document.getElementById(
+                            "suggested-amount"
+                        ).textContent = `Số tiền trả trước tối thiểu là ${minValue.toLocaleString(
+                            "vi-VN"
+                        )}đ`;
+
+                        // Offer to auto-correct
+                        document.getElementById(
+                            "suggested-amount"
+                        ).innerHTML = `Số tiền trả trước tối thiểu là ${minValue.toLocaleString(
+                            "vi-VN"
+                        )}đ 
+                            <button onclick="applyMinDownPayment()" class="text-blue-500 underline ml-1">
+                                Áp dụng giá trị này
+                            </button>`;
+                    } else if (percentage > 80) {
+                        progressBar.style.backgroundColor = "#f87171"; // red
+                        percentElement.classList.add("text-red-500");
+                        percentElement.classList.remove(
+                            "text-accent",
+                            "bg-accent/10"
+                        );
+
+                        // Calculate max value
+                        const maxValue = Math.floor(contractValue * 0.8);
+                        document.getElementById(
+                            "suggested-amount"
+                        ).innerHTML = `Số tiền trả trước tối đa là ${maxValue.toLocaleString(
+                            "vi-VN"
+                        )}đ
+                            <button onclick="applyMaxDownPayment()" class="text-blue-500 underline ml-1">
+                                Áp dụng giá trị này
+                            </button>`;
+                    }
+
+                    return false;
+                } else {
+                    errorElement.classList.add("hidden");
+                    suggestionElement.classList.add("hidden");
+
+                    // Only enable the calculate button if both contract value and monthly income are also valid
+                    const monthlyIncomeInput =
+                        document.getElementById("monthlyIncome");
+                    const monthlyIncomeValue = parseInt(
+                        monthlyIncomeInput.value.replace(/[^\d]/g, "") || 0
+                    );
+
+                    if (monthlyIncomeValue >= 9000000) {
+                        calculateBtn.disabled = false;
+                        calculateBtn.classList.remove(
+                            "opacity-50",
+                            "cursor-not-allowed"
+                        );
+                    }
+
+                    downPaymentInput.classList.remove(
+                        "border-red-500",
+                        "bg-red-50"
+                    );
+                    downPaymentInput.classList.add("border-green-500");
+                    validDownPaymentIcon.classList.remove("hidden");
+                    progressBar.style.backgroundColor = ""; // Reset to default
+                    percentElement.classList.remove("text-red-500");
+                    percentElement.classList.add("text-accent", "bg-accent/10");
+
+                    if (percentage >= 45 && percentage <= 75) {
+                        downPaymentInput.classList.add(
+                            "border-green-500",
+                            "bg-green-50"
+                        );
+                        setTimeout(() => {
+                            downPaymentInput.classList.remove(
+                                "border-green-500",
+                                "bg-green-50"
+                            );
+                        }, 2000);
+                    }
+
+                    return true;
+                }
+            }
+
+            // Function to apply minimum down payment
+            function applyMinDownPayment() {
+                const contractValueInput =
+                    document.getElementById("contractValue");
+                const downPaymentInput = document.getElementById("downPayment");
+                const contractValue = parseInt(
+                    contractValueInput.value.replace(/[^\d]/g, "") || 0
+                );
+
+                if (contractValue > 0) {
+                    const minValue = Math.ceil(contractValue * 0.4);
+                    downPaymentInput.value = minValue.toLocaleString("vi-VN");
+                    validateDownPayment();
+                }
+            }
+
+            // Function to apply maximum down payment
+            function applyMaxDownPayment() {
+                const contractValueInput =
+                    document.getElementById("contractValue");
+                const downPaymentInput = document.getElementById("downPayment");
+                const contractValue = parseInt(
+                    contractValueInput.value.replace(/[^\d]/g, "") || 0
+                );
+
+                if (contractValue > 0) {
+                    const maxValue = Math.floor(contractValue * 0.8);
+                    downPaymentInput.value = maxValue.toLocaleString("vi-VN");
+                    validateDownPayment();
+                }
+            }
+
+            // Update down payment when contract value changes
+            document
+                .getElementById("contractValue")
+                .addEventListener("input", function () {
+                    const contractValue = parseInt(
+                        this.value.replace(/[^\d]/g, "") || 0
+                    );
+                    const downPaymentInput =
+                        document.getElementById("downPayment");
+
+                    // If down payment is empty or invalid, set it to 40% of contract value
+                    const currentDownPayment = parseInt(
+                        downPaymentInput.value.replace(/[^\d]/g, "") || 0
+                    );
+                    if (
+                        (currentDownPayment === 0 ||
+                            this.value.length >
+                                downPaymentInput.value.length) &&
+                        contractValue > 0
+                    ) {
+                        const defaultDownPayment = Math.round(
+                            contractValue * 0.4
+                        );
+                        downPaymentInput.value =
+                            defaultDownPayment.toLocaleString("vi-VN");
+                    }
+
+                    validateDownPayment();
+                });
+
+            // Add event listener when the page loads
+            window.addEventListener("DOMContentLoaded", function () {
+                // Setup improved animations for user interactions
+                const setupInputAnimations = () => {
+                    const inputs = document.querySelectorAll("input");
+
+                    inputs.forEach((input) => {
+                        // Focus animation
+                        input.addEventListener("focus", () => {
+                            input.classList.add(
+                                "ring-2",
+                                "ring-primary/20",
+                                "border-primary"
+                            );
+                        });
+
+                        // Blur animation
+                        input.addEventListener("blur", () => {
+                            input.classList.remove(
+                                "ring-2",
+                                "ring-primary/20",
+                                "border-primary"
+                            );
+
+                            // Validate on blur
+                            if (input.id === "monthlyIncome") {
+                                validateMonthlyIncome(input);
+                            } else if (input.id === "contractValue") {
+                                validateDownPayment();
+                            } else if (input.id === "downPayment") {
+                                validateDownPayment();
+                            }
+                        });
+                    });
+                };
+
+                // Initialize animations
+                setupInputAnimations();
+
+                // Initial validations
+                const monthlyIncomeInput =
+                    document.getElementById("monthlyIncome");
+                const contractValueInput =
+                    document.getElementById("contractValue");
+                const downPaymentInput = document.getElementById("downPayment");
+
+                // Add placeholder values for better UX
+                if (!monthlyIncomeInput.value) {
+                    monthlyIncomeInput.placeholder = "Tối thiểu 9,000,000đ";
+                }
+
+                if (!contractValueInput.value) {
+                    contractValueInput.placeholder =
+                        "Nhập tổng giá trị hệ thống";
+                }
+
+                if (!downPaymentInput.value) {
+                    downPaymentInput.placeholder =
+                        "Từ 40% đến 80% giá trị hệ thống";
+                }
+
+                // Initialize validation on startup
+                if (monthlyIncomeInput.value) {
+                    validateMonthlyIncome(monthlyIncomeInput);
+                }
+
+                if (contractValueInput.value && downPaymentInput.value) {
+                    validateDownPayment();
+                }
+
+                // Disable calculate button initially
+                const calculateBtn = document.querySelector(
+                    'button[onclick="calculateInstallmentPayment()"]'
+                );
+                if (calculateBtn) {
+                    calculateBtn.disabled = true;
+                    calculateBtn.classList.add(
+                        "opacity-50",
+                        "cursor-not-allowed"
+                    );
+                }
+            });
+
+            function calculateInstallmentPayment() {
+                // Show loading indicator
+                const button = document.querySelector(
+                    'button[onclick="calculateInstallmentPayment()"]'
+                );
+                const loadingIndicator =
+                    button.querySelector(".loading-indicator");
+                const calculatorIcon = button.querySelector(".fa-calculator");
+
+                // Disable button and show loading state
+                button.disabled = true;
+                loadingIndicator.classList.remove("hidden");
+                calculatorIcon.classList.add("hidden");
+
+                // Get input values
+                const contractValue = parseFloat(
+                    document
+                        .getElementById("contractValue")
+                        .value.replace(/[^\d]/g, "")
+                );
+                const downPayment = parseFloat(
+                    document
+                        .getElementById("downPayment")
+                        .value.replace(/[^\d]/g, "")
+                );
+                const interestRate =
+                    parseFloat(document.getElementById("interestRate").value) /
+                    100;
+                const term = parseInt(document.getElementById("term").value);
+
+                // Calculate loan amount
+                const loanAmount = contractValue - downPayment;
+
+                // Simulate calculation delay for better UX
+                setTimeout(() => {
+                    // Calculate monthly payment (principal + interest)
+                    const monthlyInterestRate = interestRate / 12;
+                    const numPayments = term;
+
+                    // Use the formula for monthly payment: P * r * (1+r)^n / ((1+r)^n - 1)
+                    const monthlyPayment =
+                        (loanAmount *
+                            monthlyInterestRate *
+                            Math.pow(1 + monthlyInterestRate, numPayments)) /
+                        (Math.pow(1 + monthlyInterestRate, numPayments) - 1);
+
+                    // Calculate total payment over the loan term
+                    const totalPayment = monthlyPayment * numPayments;
+
+                    // Calculate total interest paid
+                    const totalInterest = totalPayment - loanAmount;
+
+                    // Format results
+                    const formattedLoanAmount =
+                        loanAmount.toLocaleString("vi-VN") + "đ";
+                    const formattedMonthlyPayment =
+                        monthlyPayment.toLocaleString("vi-VN", {
+                            maximumFractionDigits: 0,
+                        }) + "đ";
+                    const formattedTotalPayment =
+                        totalPayment.toLocaleString("vi-VN", {
+                            maximumFractionDigits: 0,
+                        }) + "đ";
+                    const formattedTotalInterest =
+                        totalInterest.toLocaleString("vi-VN", {
+                            maximumFractionDigits: 0,
+                        }) + "đ";
+
+                    // Generate payment schedule table (first 3 months)
+                    let paymentSchedule = "";
+                    let remainingBalance = loanAmount;
+
+                    for (
+                        let month = 1;
+                        month <= Math.min(3, numPayments);
+                        month++
+                    ) {
+                        const interestPayment =
+                            remainingBalance * monthlyInterestRate;
+                        const principalPayment =
+                            monthlyPayment - interestPayment;
+                        remainingBalance -= principalPayment;
+
+                        paymentSchedule += `
+                        <tr>
+                            <td class="py-2 px-4">${month}</td>
+                            <td class="py-2 px-4">${principalPayment.toLocaleString(
+                                "vi-VN",
+                                { maximumFractionDigits: 0 }
+                            )}đ</td>
+                            <td class="py-2 px-4">${interestPayment.toLocaleString(
+                                "vi-VN",
+                                { maximumFractionDigits: 0 }
+                            )}đ</td>
+                            <td class="py-2 px-4">${monthlyPayment.toLocaleString(
+                                "vi-VN",
+                                { maximumFractionDigits: 0 }
+                            )}đ</td>
+                            <td class="py-2 px-4">${remainingBalance.toLocaleString(
+                                "vi-VN",
+                                { maximumFractionDigits: 0 }
+                            )}đ</td>
+                        </tr>
+                        `;
+                    }
+
+                    // Format payment date
+                    const today = new Date();
+                    const firstPaymentDate = new Date(today);
+                    firstPaymentDate.setMonth(today.getMonth() + 1);
+                    const formattedDate =
+                        firstPaymentDate.toLocaleDateString("vi-VN");
+
+                    // Prepare HTML for the results modal
+                    const resultsHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-primary/5 p-4 rounded-lg">
+                            <h4 class="font-semibold text-primary mb-2">Thông tin khoản vay</h4>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between"><span>Giá trị hệ thống:</span> <span class="font-medium">${contractValue.toLocaleString(
+                                    "vi-VN"
+                                )}đ</span></li>
+                                <li class="flex justify-between"><span>Số tiền trả trước:</span> <span class="font-medium">${downPayment.toLocaleString(
+                                    "vi-VN"
+                                )}đ</span></li>
+                                <li class="flex justify-between"><span>Số tiền vay:</span> <span class="font-medium">${formattedLoanAmount}</span></li>
+                                <li class="flex justify-between"><span>Lãi suất hàng năm:</span> <span class="font-medium">${
+                                    document.getElementById("interestRate")
+                                        .value
+                                }%</span></li>
+                                <li class="flex justify-between"><span>Kỳ hạn vay:</span> <span class="font-medium">${term} tháng</span></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-accent/5 p-4 rounded-lg">
+                            <h4 class="font-semibold text-accent mb-2">Kết quả tính toán</h4>
+                            <ul class="space-y-2">
+                                <li class="flex justify-between"><span>Khoản thanh toán hàng tháng:</span> <span class="font-medium text-accent">${formattedMonthlyPayment}</span></li>
+                                <li class="flex justify-between"><span>Tổng tiền phải trả:</span> <span class="font-medium">${formattedTotalPayment}</span></li>
+                                <li class="flex justify-between"><span>Tiền lãi phải trả:</span> <span class="font-medium">${formattedTotalInterest}</span></li>
+                                <li class="flex justify-between"><span>Ngày thanh toán đầu tiên:</span> <span class="font-medium">${formattedDate}</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4 class="font-semibold text-primary mb-2">Lịch thanh toán</h4>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white border border-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="py-2 px-4 border-b text-left">Tháng</th>
+                                        <th class="py-2 px-4 border-b text-left">Gốc (VNĐ)</th>
+                                        <th class="py-2 px-4 border-b text-left">Lãi (VNĐ)</th>
+                                        <th class="py-2 px-4 border-b text-left">Tổng (VNĐ)</th>
+                                        <th class="py-2 px-4 border-b text-left">Số dư (VNĐ)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${paymentSchedule}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-right mt-2 text-sm text-gray-500">* Hiển thị 3 tháng đầu tiên</div>
+                    </div>
+                    
+                    <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                        <h4 class="font-semibold text-blue-600 mb-2 flex items-center">
+                            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Lợi ích khi lắp đặt hệ thống điện mặt trời
+                        </h4>
+                        <ul class="space-y-1 text-blue-800">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>Tiết kiệm chi phí điện hàng tháng lên đến 70-90%</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>Đầu tư một lần, sử dụng lâu dài (25-30 năm)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>Khoản tiết kiệm hàng tháng có thể cao hơn khoản trả góp</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>Góp phần bảo vệ môi trường và giảm phát thải carbon</span>
+                            </li>
+                        </ul>
+                    </div>
+                    `;
+
+                    // Show the results modal
+                    document.getElementById("resultsContent").innerHTML =
+                        resultsHTML;
+                    document
+                        .getElementById("calculationResults")
+                        .classList.remove("hidden");
+
+                    // Animate the results card
+                    setTimeout(() => {
+                        document
+                            .getElementById("resultsCard")
+                            .classList.remove("opacity-0", "translate-y-8");
+                    }, 100);
+
+                    // Reset button state
+                    loadingIndicator.classList.add("hidden");
+                    calculatorIcon.classList.remove("hidden");
+                    button.disabled = false;
+                }, 1200); // Simulate a calculation delay of 1.2 seconds
+            }
+
+            function closeResults() {
+                // Animate the results card out
+                const resultsCard = document.getElementById("resultsCard");
+                const resultsModal =
+                    document.getElementById("calculationResults");
+
+                resultsCard.classList.add("opacity-0", "translate-y-8");
+
+                // Wait for animation to complete before hiding the modal
+                setTimeout(() => {
+                    resultsModal.classList.add("hidden");
+                }, 300);
+            }
+        </script>
     </body>
 </html>
