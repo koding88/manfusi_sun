@@ -510,30 +510,201 @@ const data = [
     })),
     // // Row 15
     (row15 = createRecord({
-        
+        orderNumber: 15,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB8-1P",
+        powerDetails: "Hệ bám tải, lưu trữ 8,54kWp 1 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 8.54,
+        unitPrice: 20000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 2000000,
+        maximumMonthlyInstallment: 3000000,
+        suitableForFamilyMonthly: {
+            min: 2600000,
+            max: 4400000,
+        },
     })),
-    // // Row 16
-    // (row16 = createRecord({})),
-    // // Row 17
-    // (row17 = createRecord({})),
-    // // Row 18
-    // (row18 = createRecord({})),
-    // // Row 19
-    // (row19 = createRecord({})),
-    // // Row 20
-    // (row20 = createRecord({})),
-    // // Row 21
-    // (row21 = createRecord({})),
-    // // Row 22
-    // (row22 = createRecord({})),
-    // // Row 23
-    // (row23 = createRecord({})),
-    // // Row 24
-    // (row24 = createRecord({})),
-    // // Row 25
-    // (row25 = createRecord({})),
-    // // Row 26
-    // (row26 = createRecord({})),
+    // Row 16
+    (row16 = createRecord({
+        orderNumber: 16,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB11-1P",
+        powerDetails:
+            "Hệ bám tải, lưu trữ 10,98kWp 1 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 10.98,
+        unitPrice: 18000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 2300000,
+        maximumMonthlyInstallment: 3500000,
+        suitableForFamilyMonthly: {
+            min: 3300000,
+            max: 5200000,
+        },
+    })),
+    // Row 17
+    (row17 = createRecord({
+        orderNumber: 17,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB11-3P",
+        powerDetails:
+            "Hệ bám tải, lưu trữ 10,98kWp 3 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 10.98,
+        unitPrice: 18000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 2300000,
+        maximumMonthlyInstallment: 3500000,
+        suitableForFamilyMonthly: {
+            min: 3300000,
+            max: 5300000,
+        },
+    })),
+    // Row 18
+    (row18 = createRecord({
+        orderNumber: 18,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB11-3P",
+        powerDetails:
+            "Hệ bám tải, lưu trữ 10,98kWp 3 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 10.98,
+        unitPrice: 18000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 2300000,
+        maximumMonthlyInstallment: 3500000,
+        suitableForFamilyMonthly: {
+            min: 3300000,
+            max: 5400000,
+        },
+    })),
+    // Row 19
+    (row19 = createRecord({
+        orderNumber: 19,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB15-1P",
+        powerDetails:
+            "Hệ bám tải, lưu trữ 14,64kWp 1 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 14.64,
+        unitPrice: 18000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 3100000,
+        maximumMonthlyInstallment: 4600000,
+        suitableForFamilyMonthly: {
+            min: 4200000,
+            max: 6800000,
+        },
+    })),
+    // Row 20
+    (row20 = createRecord({
+        orderNumber: 20,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB15-3P",
+        powerDetails:
+            "Hệ bám tải, lưu trữ 14,64kWp 3 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 14.64,
+        unitPrice: 18000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 3100000,
+        maximumMonthlyInstallment: 4600000,
+        suitableForFamilyMonthly: {
+            min: 4200000,
+            max: 6900000,
+        },
+    })),
+    // Row 21
+    (row21 = createRecord({
+        orderNumber: 21,
+        productType: Column.productType.LUU_TRU,
+        productName: "ECO7-1P",
+        powerDetails: "Hệ bám tải, lưu trữ 7,32kWp 1 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 7.32,
+        unitPrice: 16000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 1400000,
+        maximumMonthlyInstallment: 2000000,
+        suitableForFamilyMonthly: {
+            min: 2300000,
+            max: 3700000,
+        },
+    })),
+    // Row 22
+    (row22 = createRecord({
+        orderNumber: 22,
+        productType: Column.productType.LUU_TRU,
+        productName: "ECO12-1P",
+        powerDetails: "Hệ bám tải, lưu trữ 12,2kWp 1 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 12.2,
+        unitPrice: 16000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 2300000,
+        maximumMonthlyInstallment: 3400000,
+        suitableForFamilyMonthly: {
+            min: 3600000,
+            max: 5800000,
+        },
+    })),
+    // Row 23
+    (row23 = createRecord({
+        orderNumber: 23,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB13-3P",
+        powerDetails:
+            "Hệ bám tải, lưu trữ 13,42kWp 3 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 13.42,
+        unitPrice: 18000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 2900000,
+        maximumMonthlyInstallment: 4200000,
+        suitableForFamilyMonthly: {
+            min: 3900000,
+            max: 6400000,
+        },
+    })),
+    // Row 24
+    (row24 = createRecord({
+        orderNumber: 24,
+        productType: Column.productType.LUU_TRU,
+        productName: "SHB17-3P",
+        powerDetails:
+            "Hệ bám tải, lưu trữ 17,08kWp 3 pha, pin lưu trữ 5,12 kWh",
+        equipmentDetails:
+            "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
+        storage: 5.12,
+        kwpNumber: 17.08,
+        unitPrice: 18000000,
+        monthlyDiscountPercentage: 5, // 5%
+        minimumMonthlyInstallment: 3700000,
+        maximumMonthlyInstallment: 5400000,
+        suitableForFamilyMonthly: {
+            min: 4900000,
+            max: 8000000,
+        },
+    })),
 ];
 
 console.log(`orderNumber: ${row1.orderNumber}`);
