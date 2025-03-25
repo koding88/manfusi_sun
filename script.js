@@ -320,32 +320,6 @@ if (electricityBillInput) {
     });
 }
 
-// Input validation
-function validateInputs() {
-    const monthlyBillText = document.getElementById("electricity-bill").value;
-    // Chuyển đổi chuỗi tiền tệ thành số
-    const monthlyBill = Number(monthlyBillText.replace(/[^\d]/g, ""));
-
-    if (!monthlyBill) {
-        alert("Vui lòng nhập tiền điện trung bình hàng tháng.");
-        return false;
-    }
-
-    if (monthlyBill < 500000) {
-        alert("Tiền điện trung bình hàng tháng phải ít nhất 500,000 VNĐ.");
-        return false;
-    }
-
-    if (monthlyBill > 50000000) {
-        alert(
-            "Tiền điện trung bình hàng tháng không được vượt quá 50,000,000 VNĐ."
-        );
-        return false;
-    }
-
-    return true;
-}
-
 // Show loading state
 function showLoading() {
     const resultsContent = document.getElementById("results-content");
