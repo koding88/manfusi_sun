@@ -1,8 +1,8 @@
 // Constants for Southern Region (Miền Nam) solar calculations
-const SouthSunshineHoursCoefficient = 4; // Hệ số giờ nắng
+const SouthSunshineHoursCoefficient = 4.5; // Hệ số giờ nắng
 const SouthAverageElectricityPrice = 3000; // Tiền điện trung bình (VNĐ/kWh)
 const SouthBatteryStorageCoefficient = 0.6; // Hệ số pin lưu trữ (60%)
-const SouthernRegionCoefficient = 4; // TB Miền Nam (Average coefficient for Southern Region)
+const SouthernRegionCoefficient = 4.5; // TB Miền Nam (Average coefficient for Southern Region)
 
 // Define variables for the solar system product information
 const SouthColumn = {

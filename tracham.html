@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Tính toán trả góp dự án</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: "#0056b3",
+                            secondary: "#003d82",
+                            highlight: "#ffb700",
+                            success: "#28a745",
+                            accent: "#83bf38",
+                            surface: "#ffffff",
+                            lightblue: "#e5f3ff",
+                        },
+                        animation: {
+                            "fade-in": "fadeIn 0.5s ease-out",
+                            "slide-up": "slideUp 0.6s ease-out",
+                            "pulse-slow":
+                                "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                            "bounce-slow": "bounce 2s infinite",
+                            "spin-slow": "spin 8s linear infinite",
+                            float: "float 6s ease-in-out infinite",
+                            scale: "scale 2s ease-in-out infinite",
+                        },
+                        keyframes: {
+                            fadeIn: {
+                                "0%": { opacity: "0" },
+                                "100%": { opacity: "1" },
+                            },
+                            slideUp: {
+                                "0%": {
+                                    transform: "translateY(20px)",
+                                    opacity: "0",
+                                },
+                                "100%": {
+                                    transform: "translateY(0)",
+                                    opacity: "1",
+                                },
+                            },
+                            float: {
+                                "0%, 100%": {
+                                    transform: "translateY(0)",
+                                },
+                                "50%": {
+                                    transform: "translateY(-10px)",
+                                },
+                            },
+                            scale: {
+                                "0%, 100%": {
+                                    transform: "scale(1)",
+                                },
+                                "50%": {
+                                    transform: "scale(1.05)",
+                                },
+                            },
+                        },
+                        boxShadow: {
+                            glass: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
+                            neon: '0 0 5px theme("colors.accent"), 0 0 20px theme("colors.accent")',
+                        },
+                        backdropBlur: {
+                            xs: "2px",
+                        },
+                    },
+                },
+            };
+        </script>
+        <style type="text/tailwindcss">
+            @layer components {
+                .card-gradient {
+                    background: linear-gradient(
+                        135deg,
+                        #f0f7ff 0%,
+                        #e5edf9 100%
+                    );
+                }
+
+                .hero-gradient {
+                    background: radial-gradient(
+                            circle at top right,
+                            rgba(131, 191, 56, 0.15) 0%,
+                            rgba(0, 86, 179, 0.1) 100%
+                        ),
+                        linear-gradient(135deg, #f0f7ff 0%, #e5edf9 100%);
+                }
+
+                .glass-effect {
+                    background: rgba(255, 255, 255, 0.7);
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                }
+
+                .result-card {
+                    transition: all 0.3s ease;
+                }
+
+                .result-card:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                }
+
+                .form-control:focus {
+                    transition: all 0.3s ease;
+                }
+
+                .rotating-icon {
+                    animation: spin-slow 8s linear infinite;
+                }
+
+                .floating-icon {
+                    animation: float 6s ease-in-out infinite;
+                }
+
+                .pulsing-icon {
+                    animation: pulse-slow 3s infinite;
+                }
+
+                .input-field {
+                    @apply w-full p-3 border border-gray-300 rounded-lg text-lg font-bold 
+                           focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 
+                           shadow-sm transition-all duration-300;
+                }
+
+                .btn-primary {
+                    @apply bg-gradient-to-r from-accent to-accent/90 text-white font-semibold 
+                           py-4 px-4 rounded-lg transition transform 
+                           hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] 
+                           shadow-md flex justify-center items-center gap-2;
+                }
+
+                .btn-secondary {
+                    @apply bg-gradient-to-r from-primary to-secondary text-white font-semibold 
+                           py-3 px-4 rounded-lg transition transform 
+                           hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] 
+                           shadow-md flex justify-center items-center gap-2;
+                }
+
+                .tooltip {
+                    position: relative;
+                    display: inline-block;
+                    cursor: pointer;
+                }
+
+                .tooltip .tooltiptext {
+                    visibility: hidden;
+                    width: 250px;
+                    background-color: rgba(30, 41, 59, 0.95);
+                    color: #fff;
+                    text-align: center;
+                    border-radius: 6px;
+                    padding: 10px;
+                    position: absolute;
+                    z-index: 50;
+                    bottom: 125%;
+                    left: 50%;
+                    margin-left: -125px;
+                    opacity: 0;
+                    transition: opacity 0.3s, transform 0.3s;
+                    transform: translateY(10px);
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                    font-size: 0.875rem;
+                    font-weight: normal;
+                    line-height: 1.4;
+                }
+
+                /* Special styling for table header tooltips */
+                .table-header .tooltip .tooltiptext {
+                    bottom: auto;
+                    top: 100%;
+                    margin-top: 10px;
+                    left: 0;
+                    margin-left: 0;
+                    text-align: left;
+                }
+
+                .tooltip:hover .tooltiptext {
+                    visibility: visible;
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+
+                .progress-bar {
+                    position: relative;
+                    height: 0.5rem;
+                    background-color: #e5e7eb;
+                    border-radius: 9999px;
+                    overflow: hidden;
+                }
+
+                .progress-value {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 100%;
+                    background: linear-gradient(to right, #83bf38, #28a745);
+                    transition: width 0.5s ease;
+                    border-radius: 9999px;
+                }
+
+                .table-header {
+                    @apply py-3 px-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+                }
+
+                .table-cell {
+                    @apply py-3 px-4;
+                }
+
+                .decorated-heading {
+                    @apply relative inline-flex items-center;
+                }
+
+                .decorated-heading::before {
+                    content: "";
+                    position: absolute;
+                    bottom: -5px;
+                    left: 0;
+                    width: 100%;
+                    height: 2px;
+                    background: linear-gradient(
+                        to right,
+                        theme("colors.accent"),
+                        transparent
+                    );
+                }
+
+                /* Down Payment Range Slider */
+                input[type="range"] {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 100%;
+                    height: 0.5rem;
+                    background: #e5e7eb;
+                    border-radius: 9999px;
+                    outline: none;
+                }
+
+                input[type="range"]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 1.5rem;
+                    height: 1.5rem;
+                    background: #fff;
+                    border: 2px solid #83bf38;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                    transition: all 0.2s ease;
+                }
+
+                input[type="range"]::-webkit-slider-thumb:hover {
+                    background: #83bf38;
+                    transform: scale(1.1);
+                }
+
+                .badge {
+                    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+                }
+
+                .badge-primary {
+                    @apply bg-primary/10 text-primary;
+                }
+
+                .badge-success {
+                    @apply bg-success/10 text-success;
+                }
+
+                .badge-accent {
+                    @apply bg-accent/10 text-accent;
+                }
+
+                .badge-highlight {
+                    @apply bg-highlight/10 text-highlight;
+                }
+
+                .badge-recommended {
+                    @apply bg-green-100 text-green-800;
+                }
+
+                .orbit {
+                    position: absolute;
+                    border-radius: 50%;
+                    border: 1px dashed rgba(131, 191, 56, 0.3);
+                }
+
+                .orbit-inner {
+                    width: 300px;
+                    height: 300px;
+                    top: -100px;
+                    right: -100px;
+                }
+
+                .orbit-outer {
+                    width: 500px;
+                    height: 500px;
+                    top: -200px;
+                    right: -200px;
+                }
+
+                .orbit-planet {
+                    position: absolute;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    background: rgba(131, 191, 56, 0.2);
+                    box-shadow: 0 0 10px rgba(131, 191, 56, 0.3);
+                }
+            }
+        </style>
+    </head>
+    <body class="bg-gray-50 text-gray-800 font-sans leading-relaxed">
+        <div class="relative mx-auto overflow-hidden">
+            <!-- Decorative Shapes -->
+            <div
+                class="fixed -z-10 top-0 left-0 w-full h-full overflow-hidden opacity-10"
+            >
+                <div
+                    class="absolute top-0 right-0 w-96 h-96 bg-accent rounded-full filter blur-3xl opacity-20"
+                ></div>
+                <div
+                    class="absolute bottom-0 left-0 w-96 h-96 bg-primary rounded-full filter blur-3xl opacity-20"
+                ></div>
+                <div
+                    class="absolute top-1/2 left-1/3 w-72 h-72 bg-highlight rounded-full filter blur-3xl opacity-10"
+                ></div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="max-w-7xl mx-auto p-5">
+                <!-- Hero Section -->
+                <header
+                    class="relative hero-gradient rounded-2xl p-8 mb-10 shadow-lg overflow-hidden"
+                >
+                    <div class="orbit orbit-inner"></div>
+                    <div class="orbit orbit-outer"></div>
+                    <div
+                        class="orbit-planet"
+                        style="top: -50px; right: 100px"
+                    ></div>
+                    <div
+                        class="orbit-planet"
+                        style="top: 50px; right: -50px"
+                    ></div>
+
+                    <div
+                        class="flex flex-col md:flex-row md:items-center md:justify-between"
+                    >
+                        <div class="mb-6 md:mb-0 md:mr-8">
+                            <div class="flex items-center mb-4">
+                                <div
+                                    class="flex justify-center items-center w-14 h-14 rounded-full bg-accent/10 mr-4"
+                                >
+                                    <i
+                                        class="fas fa-calculator text-accent text-2xl rotating-icon"
+                                    ></i>
+                                </div>
+                                <h1 class="text-4xl font-bold">
+                                    <span class="text-primary">Tính toán</span>
+                                    <span class="text-accent">Trả góp</span>
+                                </h1>
+                            </div>
+                            <p class="text-gray-600 text-lg mb-4 max-w-xl">
+                                Công cụ tính toán linh hoạt giúp bạn lập kế
+                                hoạch tài chính cho dự án đầu tư với nhiều
+                                phương án trả góp.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="badge badge-primary">
+                                    <i class="fas fa-calculator mr-1"></i> Kỳ
+                                    hạn linh hoạt
+                                </span>
+                                <span class="badge badge-accent">
+                                    <i class="fas fa-shield-alt mr-1"></i> Tính
+                                    toán chính xác
+                                </span>
+                                <span class="badge badge-highlight">
+                                    <i class="fas fa-chart-line mr-1"></i> Chi
+                                    phí rõ ràng
+                                </span>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <div class="w-40 h-40 floating-icon">
+                                <img
+                                    src="https://cdn-icons-png.flaticon.com/512/2660/2660573.png"
+                                    alt="Financial planning"
+                                    class="w-full h-auto"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Credit Limit Calculator Section -->
+                <div class="flex flex-col lg:flex-row gap-8 mb-8">
+                    <!-- Input section -->
+                    <div
+                        class="flex-1 min-w-0 glass-effect p-6 rounded-2xl shadow-glass animate-fade-in"
+                    >
+                        <div class="mb-8">
+                            <h2
+                                class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center decorated-heading"
+                            >
+                                <i
+                                    class="fas fa-credit-card mr-2 text-accent"
+                                ></i>
+                                Kiểm tra hạn mức trả chậm
+                            </h2>
+
+                            <div
+                                class="mb-8 relative transition-all hover:translate-x-1 duration-300 ease-in-out"
+                            >
+                                <label
+                                    for="monthlyIncome"
+                                    class="block mb-2 font-semibold flex items-center"
+                                >
+                                    <i
+                                        class="fas fa-wallet text-accent mr-2"
+                                    ></i>
+                                    Thu nhập hàng tháng
+                                    <span class="text-accent ml-1">*</span>
+                                    <span class="tooltip ml-2">
+                                        <i
+                                            class="fas fa-question-circle text-gray-500"
+                                        ></i>
+                                        <span class="tooltiptext"
+                                            >Tổng thu nhập bình quân mỗi tháng
+                                            của bạn.</span
+                                        >
+                                    </span>
+                                </label>
+                                <div class="relative">
+                                    <input
+                                        type="text"
+                                        id="monthlyIncome"
+                                        placeholder="Ví dụ: 10,000,000đ"
+                                        class="input-field pl-10"
+                                    />
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                                    >
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </span>
+                                </div>
+                                <small class="block mt-1 text-gray-600 text-sm">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Nhập tổng thu nhập bình quân hàng tháng
+                                </small>
+                            </div>
+
+                            <div class="flex justify-center">
+                                <button
+                                    onclick="calculateCreditLimit()"
+                                    class="btn-primary w-full"
+                                >
+                                    <i class="fas fa-search-dollar text-lg"></i>
+                                    Kiểm tra hạn mức
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Credit result container -->
+                    <div
+                        class="flex-1 min-w-0 glass-effect p-6 rounded-2xl shadow-glass animate-fade-in"
+                        style="animation-delay: 0.2s"
+                    >
+                        <h2
+                            class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center decorated-heading"
+                        >
+                            <i class="fas fa-check-circle mr-2 text-accent"></i>
+                            Kết quả thẩm định
+                        </h2>
+
+                        <div
+                            id="credit-result-container"
+                            class="transition-all duration-300"
+                        >
+                            <div
+                                class="text-center p-6 bg-gray-50/50 backdrop-blur-xs rounded-lg text-gray-600 shadow-sm"
+                            >
+                                <div class="mb-4 relative w-24 h-24 mx-auto">
+                                    <div
+                                        class="absolute inset-0 bg-primary/10 rounded-full pulsing-icon"
+                                    ></div>
+                                    <i
+                                        class="fas fa-credit-card text-5xl text-primary absolute inset-0 flex items-center justify-center"
+                                    ></i>
+                                </div>
+                                <p class="text-lg">
+                                    Nhập thu nhập hàng tháng và nhấn "Kiểm tra
+                                    hạn mức" để xem kết quả.
+                                </p>
+                                <p class="text-sm text-gray-500 mt-2">
+                                    Thông tin của bạn được bảo mật và chỉ dùng
+                                    để tính toán hạn mức tạm thời.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Credit Payment Schedule Container -->
+                <div
+                    id="credit-schedule-container"
+                    class="glass-effect p-6 rounded-2xl shadow-glass animate-slide-up mb-8"
+                    style="animation-delay: 0.2s; display: none"
+                >
+                    <h2
+                        class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center decorated-heading"
+                    >
+                        <i class="fas fa-calendar-alt mr-2 text-accent"></i> Các
+                        gói trả chậm mỗi tháng
+                    </h2>
+
+                    <!-- Remove loan term selector buttons since they're added in JS -->
+                    <div id="credit-schedule"></div>
+                </div>
+
+                <!-- Separator between sections -->
+                <div class="border-t border-gray-200 my-12"></div>
+
+                <!-- Main Calculator Area -->
+                <div class="flex flex-col lg:flex-row gap-8 mb-8">
+                    <!-- Phần nhập liệu và thông tin tổng quan -->
+                    <div
+                        class="flex-1 min-w-0 glass-effect p-6 rounded-2xl shadow-glass animate-fade-in"
+                    >
+                        <!-- Cột thông tin dự án -->
+                        <div class="mb-8">
+                            <h2
+                                class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center decorated-heading"
+                            >
+                                <i class="fas fa-edit mr-2 text-accent"></i>
+                                Thông tin dự án
+                            </h2>
+
+                            <div
+                                class="mb-8 relative transition-all hover:translate-x-1 duration-300 ease-in-out"
+                            >
+                                <label
+                                    for="contractValue"
+                                    class="block mb-2 font-semibold flex items-center"
+                                >
+                                    <i
+                                        class="fas fa-money-bill-wave text-accent mr-2"
+                                    ></i>
+                                    Tổng tiền dự án
+                                    <span class="text-accent ml-1">*</span>
+                                    <span class="tooltip ml-2">
+                                        <i
+                                            class="fas fa-question-circle text-gray-500"
+                                        ></i>
+                                        <span class="tooltiptext"
+                                            >Tổng chi phí của dự án đầu tư, bao
+                                            gồm tất cả các phần.</span
+                                        >
+                                    </span>
+                                </label>
+                                <div class="relative">
+                                    <input
+                                        type="text"
+                                        id="contractValue"
+                                        placeholder="Ví dụ: 108,000,000đ"
+                                        class="input-field pl-10"
+                                    />
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                                    >
+                                        <i class="fas fa-donate"></i>
+                                    </span>
+                                </div>
+                                <small class="block mt-1 text-gray-600 text-sm">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Nhập tổng giá trị của dự án
+                                </small>
+                            </div>
+
+                            <div class="mb-8 relative">
+                                <label
+                                    for="downPayment"
+                                    class="block mb-2 font-semibold flex items-center"
+                                >
+                                    <i
+                                        class="fas fa-hand-holding-usd text-accent mr-2"
+                                    ></i>
+                                    Số tiền muốn trả trước
+                                    <span class="text-accent ml-1">*</span>
+                                    <span class="tooltip ml-2">
+                                        <i
+                                            class="fas fa-question-circle text-gray-500"
+                                        ></i>
+                                        <span class="tooltiptext"
+                                            >Số tiền bạn muốn trả trước, tối
+                                            thiểu 20% tổng giá trị dự án.</span
+                                        >
+                                    </span>
+                                </label>
+                                <div class="relative">
+                                    <input
+                                        type="text"
+                                        id="downPayment"
+                                        placeholder="Ví dụ: 21,600,000đ"
+                                        class="input-field pl-10"
+                                    />
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                                    >
+                                        <i class="fas fa-piggy-bank"></i>
+                                    </span>
+                                </div>
+
+                                <!-- Down payment slider/percentage indicator -->
+                                <div class="mt-4 mb-2">
+                                    <div
+                                        class="flex justify-between text-sm mb-1"
+                                    >
+                                        <span>20% (Tối thiểu)</span>
+                                        <span id="downPaymentPercent">20%</span>
+                                        <span>100%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div
+                                            class="progress-value"
+                                            style="width: 20%"
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <small class="block mt-1 text-gray-600 text-sm">
+                                    <i class="fas fa-info-circle mr-1"></i>
+                                    Trả trước tối thiểu 20% tổng giá trị dự án
+                                </small>
+                            </div>
+
+                            <div class="flex justify-center">
+                                <button
+                                    onclick="calculateInstallmentPayment()"
+                                    class="btn-primary w-full"
+                                >
+                                    <i class="fas fa-calculator text-lg"></i>
+                                    Tính toán
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cột kết quả tính toán -->
+                    <div
+                        class="flex-1 min-w-0 glass-effect p-6 rounded-2xl shadow-glass animate-fade-in"
+                        style="animation-delay: 0.2s"
+                    >
+                        <h2
+                            class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center decorated-heading"
+                        >
+                            <i class="fas fa-chart-line mr-2 text-accent"></i>
+                            Kết quả tính toán
+                        </h2>
+
+                        <div
+                            id="result-summary"
+                            class="transition-all duration-300"
+                        >
+                            <div
+                                class="text-center p-6 bg-gray-50/50 backdrop-blur-xs rounded-lg text-gray-600 shadow-sm"
+                            >
+                                <div class="mb-4 relative w-24 h-24 mx-auto">
+                                    <div
+                                        class="absolute inset-0 bg-accent/10 rounded-full pulsing-icon"
+                                    ></div>
+                                    <i
+                                        class="fas fa-calculator text-5xl text-accent absolute inset-0 flex items-center justify-center"
+                                    ></i>
+                                </div>
+                                <p class="text-lg">
+                                    Nhập thông tin dự án và nhấn "Tính toán" để
+                                    xem kết quả chi tiết.
+                                </p>
+                                <p class="text-sm text-gray-500 mt-2">
+                                    Công cụ sẽ giúp bạn phân tích các phương án
+                                    trả góp tối ưu nhất.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Container cho bảng kế hoạch trả góp -->
+                <div
+                    id="payment-schedule-container"
+                    class="glass-effect p-6 rounded-2xl shadow-glass animate-slide-up mb-8"
+                    style="animation-delay: 0.2s; display: none"
+                >
+                    <h2
+                        class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center decorated-heading"
+                    >
+                        <i class="fas fa-table mr-2 text-accent"></i> Bảng kế
+                        hoạch trả góp
+                    </h2>
+
+                    <!-- Remove the Loan term selector buttons since they're added in JS -->
+                    <div id="payment-schedule"></div>
+                </div>
+
+                <!-- Container cho ghi chú và thông tin bổ sung -->
+                <div
+                    id="notes-container"
+                    class="animate-slide-up"
+                    style="animation-delay: 0.3s; display: none"
+                >
+                    <div class="glass-effect p-6 rounded-2xl shadow-glass mb-8">
+                        <div id="notes"></div>
+
+                        <!-- Action buttons -->
+                        <div class="flex flex-wrap gap-3 mt-6 justify-center">
+                            <button class="btn-secondary">
+                                <i class="fas fa-print mr-1"></i> In bảng kế
+                                hoạch
+                            </button>
+                            <button class="btn-secondary">
+                                <i class="fas fa-file-pdf mr-1"></i> Xuất PDF
+                            </button>
+                            <button class="btn-secondary">
+                                <i class="fas fa-share-alt mr-1"></i> Chia sẻ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loan Advisor Section -->
+                <div
+                    class="glass-effect p-6 rounded-2xl shadow-glass mb-8 animate-fade-in"
+                    style="animation-delay: 0.4s"
+                >
+                    <h2
+                        class="text-primary text-xl font-bold mb-5 pb-2 border-b border-gray-200 flex items-center decorated-heading"
+                    >
+                        <i class="fas fa-lightbulb mr-2 text-accent"></i> Tư vấn
+                        tài chính
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div
+                            class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                        >
+                            <div
+                                class="w-12 h-12 flex items-center justify-center rounded-full bg-primary/10 mb-4"
+                            >
+                                <i class="fas fa-percentage text-primary"></i>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2">
+                                Tối ưu trả trước
+                            </h3>
+                            <p class="text-gray-600 text-sm">
+                                Thanh toán trước tối thiểu 20% giúp giảm gánh
+                                nặng lãi phí và số tiền trả hàng tháng.
+                            </p>
+                        </div>
+
+                        <div
+                            class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                        >
+                            <div
+                                class="w-12 h-12 flex items-center justify-center rounded-full bg-accent/10 mb-4"
+                            >
+                                <i class="fas fa-calendar-alt text-accent"></i>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2">
+                                Kỳ hạn lý tưởng
+                            </h3>
+                            <p class="text-gray-600 text-sm">
+                                Kỳ hạn 24 tháng thường là sự cân bằng tốt giữa
+                                số tiền trả hàng tháng và tổng chi phí lãi.
+                            </p>
+                        </div>
+
+                        <div
+                            class="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                        >
+                            <div
+                                class="w-12 h-12 flex items-center justify-center rounded-full bg-highlight/10 mb-4"
+                            >
+                                <i class="fas fa-piggy-bank text-highlight"></i>
+                            </div>
+                            <h3 class="font-semibold text-lg mb-2">
+                                Thanh toán trước hạn
+                            </h3>
+                            <p class="text-gray-600 text-sm">
+                                Thanh toán trước hạn sau 24 tháng sẽ không bị
+                                phạt phí và giúp tiết kiệm chi phí lãi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <footer class="mt-8 text-center pt-5 border-t border-gray-200">
+                    <div class="flex flex-wrap justify-center gap-4 mb-4">
+                        <a
+                            href="#"
+                            class="text-primary hover:text-accent transition-colors"
+                        >
+                            <i class="fas fa-home mr-1"></i> Trang chủ
+                        </a>
+                        <a
+                            href="#"
+                            class="text-primary hover:text-accent transition-colors"
+                        >
+                            <i class="fas fa-info-circle mr-1"></i> Về chúng tôi
+                        </a>
+                        <a
+                            href="#"
+                            class="text-primary hover:text-accent transition-colors"
+                        >
+                            <i class="fas fa-question-circle mr-1"></i> Trợ giúp
+                        </a>
+                        <a
+                            href="#"
+                            class="text-primary hover:text-accent transition-colors"
+                        >
+                            <i class="fas fa-phone mr-1"></i> Liên hệ
+                        </a>
+                    </div>
+                    <p class="text-gray-500 text-sm">
+                        &copy; 2023 Trả góp dự án. Mọi quyền được bảo lưu.
+                    </p>
+                </footer>
+            </div>
+        </div>
+
+        <script src="tracham.js"></script>
+    </body>
+</html>
