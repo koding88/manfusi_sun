@@ -1,8 +1,7 @@
 // Variables to hold constants and solar data
-let regionConstants = {};
-let northSolarData = [];
-let centralSolarData = [];
-let southSolarData = [];
+let northData = {};
+let centralData = {};
+let southData = {};
 
 // Current region and solar data
 let currentRegion = "north";
@@ -14,29 +13,51 @@ let batteryCoefficient = 0;
 // Load all data when document is ready
 document.addEventListener("DOMContentLoaded", async function () {
     try {
-        // Load constants
-        const constantsResponse = await fetch("data_json/constants.json");
-        regionConstants = await constantsResponse.json();
+        // Load region-specific solar data directly from JS modules
+        import("./data_letgit/mienbac.js")
+            .then((module) => {
+                northData = module.default;
+                console.log("North data loaded:", northData);
 
-        // Load region-specific solar data
-        const northDataResponse = await fetch(
-            "data_json/north_solar_data.json"
-        );
-        northSolarData = await northDataResponse.json();
+                // Initialize with Northern Vietnam data first
+                if (currentRegion === "north") {
+                    updateRegionData();
+                    updateConstantsDisplay();
+                }
+            })
+            .catch((error) =>
+                console.error("Error loading north data:", error)
+            );
 
-        const centralDataResponse = await fetch(
-            "data_json/central_solar_data.json"
-        );
-        centralSolarData = await centralDataResponse.json();
+        import("./data_letgit/mientrung.js")
+            .then((module) => {
+                centralData = module.default;
+                console.log("Central data loaded:", centralData);
 
-        const southDataResponse = await fetch(
-            "data_json/south_solar_data.json"
-        );
-        southSolarData = await southDataResponse.json();
+                // Update if central region is selected
+                if (currentRegion === "central") {
+                    updateRegionData();
+                    updateConstantsDisplay();
+                }
+            })
+            .catch((error) =>
+                console.error("Error loading central data:", error)
+            );
 
-        // Initialize with Northern Vietnam data
-        currentRegion = "north";
-        updateRegionData();
+        import("./data_letgit/miennam.js")
+            .then((module) => {
+                southData = module.default;
+                console.log("South data loaded:", southData);
+
+                // Update if south region is selected
+                if (currentRegion === "south") {
+                    updateRegionData();
+                    updateConstantsDisplay();
+                }
+            })
+            .catch((error) =>
+                console.error("Error loading south data:", error)
+            );
 
         // Setup UI
         const form = document.getElementById("solar-form");
@@ -47,12 +68,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             currentRegion = this.value;
             updateRegionData();
             updateConstantsDisplay();
-            populateOptions();
         });
-
-        // Initial setup
-        updateConstantsDisplay();
-        populateOptions();
 
         // Submit handler
         form.addEventListener("submit", function (e) {
@@ -65,6 +81,21 @@ document.addEventListener("DOMContentLoaded", async function () {
                 calculateSolarSystem();
             }, 800);
         });
+
+        // Initialize the slider
+        const daytimeUsageSlider = document.getElementById("daytime-usage");
+        const daytimeUsageValue = document.getElementById(
+            "daytime-usage-value"
+        );
+        const sliderProgress = document.getElementById("slider-progress");
+
+        daytimeUsageSlider.addEventListener("input", function () {
+            const value = this.value;
+            daytimeUsageValue.textContent = value;
+
+            // Update slider progress width to match the selected value
+            sliderProgress.style.width = `${value}%`;
+        });
     } catch (error) {
         console.error("Error loading data:", error);
         alert("Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.");
@@ -73,21 +104,27 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 // Update data based on selected region
 function updateRegionData() {
-    if (currentRegion === "north") {
-        currentSolarData = northSolarData;
-        sunshineCoefficient = regionConstants.north.sunshine_coefficient;
-        electricityPrice = regionConstants.north.electricity_price;
-        batteryCoefficient = regionConstants.north.battery_coefficient;
-    } else if (currentRegion === "central") {
-        currentSolarData = centralSolarData;
-        sunshineCoefficient = regionConstants.central.sunshine_coefficient;
-        electricityPrice = regionConstants.central.electricity_price;
-        batteryCoefficient = regionConstants.central.battery_coefficient;
-    } else if (currentRegion === "south") {
-        currentSolarData = southSolarData;
-        sunshineCoefficient = regionConstants.south.sunshine_coefficient;
-        electricityPrice = regionConstants.south.electricity_price;
-        batteryCoefficient = regionConstants.south.battery_coefficient;
+    if (currentRegion === "north" && northData.sunshineHoursCoefficient) {
+        currentSolarData = northData.records || [];
+        sunshineCoefficient = northData.sunshineHoursCoefficient;
+        electricityPrice = northData.averageElectricityPrice;
+        batteryCoefficient = northData.batteryStorageCoefficient;
+    } else if (
+        currentRegion === "central" &&
+        centralData.sunshineHoursCoefficient
+    ) {
+        currentSolarData = centralData.records || [];
+        sunshineCoefficient = centralData.sunshineHoursCoefficient;
+        electricityPrice = centralData.averageElectricityPrice;
+        batteryCoefficient = centralData.batteryStorageCoefficient;
+    } else if (
+        currentRegion === "south" &&
+        southData.sunshineHoursCoefficient
+    ) {
+        currentSolarData = southData.records || [];
+        sunshineCoefficient = southData.sunshineHoursCoefficient;
+        electricityPrice = southData.averageElectricityPrice;
+        batteryCoefficient = southData.batteryStorageCoefficient;
     }
 }
 
@@ -98,38 +135,34 @@ function updateConstantsDisplay() {
     const electricityDisplay = document.getElementById("electricity-price");
     const batteryDisplay = document.getElementById("battery-coefficient");
 
-    if (currentRegion === "north") {
+    if (currentRegion === "north" && northData.sunshineHoursCoefficient) {
         regionName.textContent = "Miền Bắc";
-        sunshineDisplay.textContent =
-            regionConstants.north.sunshine_coefficient;
-    } else if (currentRegion === "central") {
+        sunshineDisplay.textContent = northData.sunshineHoursCoefficient;
+        electricityDisplay.textContent =
+            northData.averageElectricityPrice.toLocaleString() + " đ";
+        batteryDisplay.textContent =
+            northData.batteryStorageCoefficient * 100 + "%";
+    } else if (
+        currentRegion === "central" &&
+        centralData.sunshineHoursCoefficient
+    ) {
         regionName.textContent = "Miền Trung";
-        sunshineDisplay.textContent =
-            regionConstants.central.sunshine_coefficient;
-    } else if (currentRegion === "south") {
+        sunshineDisplay.textContent = centralData.sunshineHoursCoefficient;
+        electricityDisplay.textContent =
+            centralData.averageElectricityPrice.toLocaleString() + " đ";
+        batteryDisplay.textContent =
+            centralData.batteryStorageCoefficient * 100 + "%";
+    } else if (
+        currentRegion === "south" &&
+        southData.sunshineHoursCoefficient
+    ) {
         regionName.textContent = "Miền Nam";
-        sunshineDisplay.textContent =
-            regionConstants.south.sunshine_coefficient;
+        sunshineDisplay.textContent = southData.sunshineHoursCoefficient;
+        electricityDisplay.textContent =
+            southData.averageElectricityPrice.toLocaleString() + " đ";
+        batteryDisplay.textContent =
+            southData.batteryStorageCoefficient * 100 + "%";
     }
-
-    electricityDisplay.textContent = electricityPrice.toLocaleString() + " đ";
-    batteryDisplay.textContent = batteryCoefficient * 100 + "%";
-}
-
-// Populate package options
-function populateOptions() {
-    const batteryCapacitySelect = document.getElementById("battery-capacity");
-
-    if (!batteryCapacitySelect) {
-        console.warn(
-            "Could not find the battery capacity select element. Make sure your HTML includes an element with ID 'battery-capacity'."
-        );
-        return;
-    }
-
-    // Keep the default options (no battery, 5.12 kWh battery)
-    // The rest of the function that was populating separate package lists is not needed
-    // as we're using a simple battery selection dropdown rather than full package selection.
 }
 
 // Format currency function
@@ -137,171 +170,155 @@ function formatCurrency(amount) {
     return new Intl.NumberFormat("vi-VN", {
         style: "currency",
         currency: "VND",
+        maximumFractionDigits: 0,
     }).format(amount);
 }
 
-// Calculate payback period in years and months
-function formatPaybackPeriod(years, months) {
-    if (months === 0) {
-        return `${years} năm`;
-    } else {
-        return `${years} năm ${months} tháng`;
-    }
-}
+// Calculate required power based on monthly bill and daytime usage
+function calculateRequiredPower(monthlyBill, daytimeUsagePercentage) {
+    // Convert percentage to decimal
+    const daytimeUsageFraction = daytimeUsagePercentage / 100;
 
-// Calculate ROI based on total cost and annual savings
-function calculateROI(totalCost, annualSavings) {
-    const roi = (annualSavings / totalCost) * 100;
-    return `${roi.toFixed(1)}% / năm`;
+    // Calculate daytime electricity consumption in VND
+    const daytimeConsumptionVND = monthlyBill * daytimeUsageFraction;
+
+    // Convert to kWh using the electricity price
+    const daytimeConsumptionKWh = daytimeConsumptionVND / electricityPrice;
+
+    // Calculate required power in kWp
+    // Daily consumption = monthly consumption / 30 days
+    // Required power = daily consumption / sunshine hours coefficient
+    const requiredPowerKWp = daytimeConsumptionKWh / sunshineCoefficient / 30;
+
+    console.log("Required power calculation:", {
+        monthlyBill,
+        daytimeUsagePercentage,
+        electricityPrice,
+        sunshineCoefficient,
+        daytimeConsumptionVND,
+        daytimeConsumptionKWh,
+        requiredPowerKWp,
+    });
+
+    return requiredPowerKWp;
 }
 
 // Find the most suitable package based on user inputs
-function findSuitablePackage(monthlyBill, daytimeUsage, batteryCapacity) {
+function findSuitablePackage(
+    monthlyBill,
+    daytimeUsagePercentage,
+    batteryCapacity
+) {
+    if (!currentSolarData || currentSolarData.length === 0) {
+        console.error("No solar data available for the current region");
+        return null;
+    }
+
     const needsBattery = batteryCapacity > 0;
 
-    // Filter packages based on battery requirement
-    let filteredPackages = currentSolarData.filter(
-        (pkg) => pkg.hasBattery === needsBattery
+    // Calculate the required power
+    const requiredPowerKWp = calculateRequiredPower(
+        monthlyBill,
+        daytimeUsagePercentage
     );
+
+    // Filter packages based on battery requirement
+    let filteredPackages = currentSolarData.filter((pkg) => {
+        return needsBattery ? pkg.storage > 0 : pkg.storage === 0;
+    });
 
     if (needsBattery) {
         // Further filter by specific battery capacity
-        filteredPackages = filteredPackages.filter(
-            (pkg) => pkg.batteryCapacity === batteryCapacity
-        );
+        filteredPackages = filteredPackages.filter((pkg) => {
+            return Math.abs(pkg.storage - batteryCapacity) < 0.01; // Compare with small epsilon for floating point
+        });
     }
 
-    // Tính toán khả năng phù hợp dựa trên tiền điện hàng tháng
-    // Ước tính mức sử dụng điện dựa trên hóa đơn hàng tháng
-    const estimatedUsage = monthlyBill / electricityPrice;
-
-    // Sắp xếp các gói theo mức độ phù hợp
+    // Sort packages by how close they are to the required power
     return filteredPackages.sort((a, b) => {
-        // Xác định các đầu ra hàng tháng dựa trên cấu trúc dữ liệu
-        const aMonthlyOutput = a.monthlyOutput || a.monthlyProduction || 0;
-        const bMonthlyOutput = b.monthlyOutput || b.monthlyProduction || 0;
+        const powerDiffA = Math.abs(a.kwpNumber - requiredPowerKWp);
+        const powerDiffB = Math.abs(b.kwpNumber - requiredPowerKWp);
 
-        // Tính toán điểm phù hợp dựa trên:
-        // 1. Tiết kiệm hàng tháng phù hợp với mức chi tiêu
-        // 2. Công suất hệ thống phù hợp với mức sử dụng điện ban ngày
-        const scoreA =
-            Math.abs(a.monthlySavings / monthlyBill - daytimeUsage / 100) +
-            Math.abs(aMonthlyOutput / estimatedUsage - 1);
-        const scoreB =
-            Math.abs(b.monthlySavings / monthlyBill - daytimeUsage / 100) +
-            Math.abs(bMonthlyOutput / estimatedUsage - 1);
-
-        // Điểm thấp hơn là phù hợp hơn
-        return scoreA - scoreB;
-    })[0];
+        return powerDiffA - powerDiffB;
+    })[0]; // Return the closest match
 }
-
-// Handle range slider
-const daytimeUsageSlider = document.getElementById("daytime-usage");
-const daytimeUsageValue = document.getElementById("daytime-usage-value");
-const sliderProgress = document.getElementById("slider-progress");
-
-daytimeUsageSlider.addEventListener("input", function () {
-    const value = this.value;
-    daytimeUsageValue.textContent = value;
-
-    // Update slider progress width to match the selected value
-    sliderProgress.style.width = `${value}%`;
-});
 
 // Định dạng tiền tệ cho trường nhập tiền điện
 const electricityBillInput = document.getElementById("electricity-bill");
 
-// Lưu vị trí con trỏ và giá trị không định dạng
-let cursorPosition = 0;
-let rawValue = "";
-
 // Xử lý khi người dùng nhập liệu
-electricityBillInput.addEventListener("input", function (e) {
-    // Lưu vị trí con trỏ
-    cursorPosition = this.selectionStart;
+if (electricityBillInput) {
+    // Lưu vị trí con trỏ và giá trị không định dạng
+    let cursorPosition = 0;
+    let rawValue = "";
 
-    // Lấy giá trị mới nhập vào
-    const value = this.value;
+    electricityBillInput.addEventListener("input", function (e) {
+        // Lưu vị trí con trỏ
+        cursorPosition = this.selectionStart;
 
-    // Loại bỏ tất cả ký tự không phải số
-    rawValue = value.replace(/[^\d]/g, "");
+        // Lấy giá trị mới nhập vào
+        const value = this.value;
 
-    // Nếu không có giá trị, không làm gì cả
-    if (!rawValue) {
-        this.value = "";
-        return;
-    }
+        // Loại bỏ tất cả ký tự không phải số
+        rawValue = value.replace(/[^\d]/g, "");
 
-    // Đếm số ký tự đã bị xóa do định dạng
-    const beforeFormat = value.substring(0, cursorPosition);
-    const nonDigitsBefore = beforeFormat.replace(/\d/g, "").length;
-
-    // Thêm dấu phẩy ngăn cách hàng nghìn và thêm đơn vị tiền tệ
-    const formattedValue = Number(rawValue).toLocaleString("vi-VN") + "đ";
-    this.value = formattedValue;
-
-    // Tính toán lại vị trí con trỏ
-    const digitsBefore = beforeFormat.replace(/[^\d]/g, "").length;
-    let newPosition = 0;
-    let countDigits = 0;
-
-    for (let i = 0; i < formattedValue.length; i++) {
-        if (formattedValue[i].match(/\d/)) {
-            countDigits++;
-            if (countDigits > digitsBefore) {
-                break;
-            }
-            newPosition = i;
+        // Nếu không có giá trị, không làm gì cả
+        if (!rawValue) {
+            this.value = "";
+            return;
         }
-    }
 
-    // Đặt lại vị trí con trỏ
-    if (digitsBefore > 0) {
-        this.setSelectionRange(newPosition + 1, newPosition + 1);
-    } else {
-        this.setSelectionRange(0, 0);
-    }
-});
+        // Đếm số ký tự đã bị xóa do định dạng
+        const beforeFormat = value.substring(0, cursorPosition);
+        const nonDigitsBefore = beforeFormat.replace(/\d/g, "").length;
 
-// Xử lý khi focus vào ô nhập tiền
-electricityBillInput.addEventListener("focus", function () {
-    // Chọn toàn bộ nội dung khi focus vào
-    this.select();
-});
+        // Thêm dấu phẩy ngăn cách hàng nghìn và thêm đơn vị tiền tệ
+        const formattedValue = Number(rawValue).toLocaleString("vi-VN") + "đ";
+        this.value = formattedValue;
 
-// Xử lý khi blur khỏi ô nhập tiền
-electricityBillInput.addEventListener("blur", function () {
-    // Nếu không có giá trị, không làm gì cả
-    if (!this.value) {
-        return;
-    }
+        // Tính toán lại vị trí con trỏ
+        const digitsBefore = beforeFormat.replace(/[^\d]/g, "").length;
+        let newPosition = 0;
+        let countDigits = 0;
 
-    // Đảm bảo có định dạng đúng khi rời khỏi ô
-    const numericValue = this.value.replace(/[^\d]/g, "");
-    if (numericValue) {
-        this.value = Number(numericValue).toLocaleString("vi-VN") + "đ";
-    }
-});
+        for (let i = 0; i < formattedValue.length; i++) {
+            if (formattedValue[i].match(/\d/)) {
+                countDigits++;
+                if (countDigits > digitsBefore) {
+                    break;
+                }
+                newPosition = i;
+            }
+        }
 
-// Thiết lập ban đầu cho thanh trượt
-window.addEventListener("DOMContentLoaded", function () {
-    // Thiết lập giá trị ban đầu cho slider
-    const initialValue = daytimeUsageSlider.value; // Sẽ lấy giá trị 50 từ HTML
-    sliderProgress.style.width = `${initialValue}%`;
-
-    // Hiệu ứng loading cho các phần tử khi trang tải xong
-    const elementsToAnimate = document.querySelectorAll(".animate-slide-up");
-    elementsToAnimate.forEach((el, index) => {
-        el.style.opacity = "0";
-        el.style.transform = "translateY(20px)";
-        setTimeout(() => {
-            el.style.transition = "all 0.6s ease";
-            el.style.opacity = "1";
-            el.style.transform = "translateY(0)";
-        }, 300 + 100 * index);
+        // Đặt lại vị trí con trỏ
+        if (digitsBefore > 0) {
+            this.setSelectionRange(newPosition + 1, newPosition + 1);
+        } else {
+            this.setSelectionRange(0, 0);
+        }
     });
-});
+
+    // Xử lý khi focus vào ô nhập tiền
+    electricityBillInput.addEventListener("focus", function () {
+        // Chọn toàn bộ nội dung khi focus vào
+        this.select();
+    });
+
+    // Xử lý khi blur khỏi ô nhập tiền
+    electricityBillInput.addEventListener("blur", function () {
+        // Nếu không có giá trị, không làm gì cả
+        if (!this.value) {
+            return;
+        }
+
+        // Đảm bảo có định dạng đúng khi rời khỏi ô
+        const numericValue = this.value.replace(/[^\d]/g, "");
+        if (numericValue) {
+            this.value = Number(numericValue).toLocaleString("vi-VN") + "đ";
+        }
+    });
+}
 
 // Input validation
 function validateInputs() {
@@ -334,10 +351,12 @@ function showLoading() {
     const resultsContent = document.getElementById("results-content");
     const resultsPlaceholder = document.getElementById("results-placeholder");
 
-    resultsContent.classList.add("hidden");
-    resultsPlaceholder.innerHTML =
-        '<p><i class="fas fa-spinner fa-spin text-5xl text-accent block mb-4 animate-spin"></i> Đang tính toán...</p>';
-    resultsPlaceholder.classList.remove("hidden");
+    if (resultsContent) resultsContent.classList.add("hidden");
+    if (resultsPlaceholder) {
+        resultsPlaceholder.innerHTML =
+            '<p><i class="fas fa-spinner fa-spin text-5xl text-accent block mb-4 animate-spin"></i> Đang tính toán...</p>';
+        resultsPlaceholder.classList.remove("hidden");
+    }
 }
 
 // Hide loading state
@@ -345,51 +364,135 @@ function hideLoading() {
     const resultsContent = document.getElementById("results-content");
     const resultsPlaceholder = document.getElementById("results-placeholder");
 
-    resultsPlaceholder.classList.add("hidden");
-    resultsContent.classList.remove("hidden");
+    if (resultsPlaceholder) resultsPlaceholder.classList.add("hidden");
+    if (resultsContent) {
+        resultsContent.classList.remove("hidden");
 
-    // Thêm animation khi hiển thị kết quả
-    const resultItems = document.querySelectorAll(".result-card");
-    resultItems.forEach((item, index) => {
-        item.style.opacity = "0";
-        item.style.transform = "translateY(20px)";
-        setTimeout(() => {
-            item.style.transition = "all 0.5s ease";
-            item.style.opacity = "1";
-            item.style.transform = "translateY(0)";
-        }, 100 * index);
-    });
+        // Thêm animation khi hiển thị kết quả
+        const resultItems = document.querySelectorAll(".result-card");
+        resultItems.forEach((item, index) => {
+            item.style.opacity = "0";
+            item.style.transform = "translateY(20px)";
+            setTimeout(() => {
+                item.style.transition = "all 0.5s ease";
+                item.style.opacity = "1";
+                item.style.transform = "translateY(0)";
+            }, 100 * index);
+        });
+    }
 }
 
-// Format number with commas
-function formatNumber(number) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+// Calculate solar system performance
+function calculateSolarSystem() {
+    // Lấy thông tin đầu vào từ người dùng
+    const monthlyBillText = document.getElementById("electricity-bill").value;
+    const monthlyBill = parseInt(monthlyBillText.replace(/[^\d]/g, ""));
+    const daytimeUsagePercentage = parseInt(
+        document.getElementById("daytime-usage").value
+    );
+    const batteryCapacity = parseFloat(
+        document.getElementById("battery-capacity").value
+    );
+
+    // Tính toán công suất cần thiết dựa trên tiền điện và % sử dụng ban ngày
+    const requiredPower = calculateRequiredPower(
+        monthlyBill,
+        daytimeUsagePercentage
+    );
+
+    // Tìm gói phù hợp
+    const recommendedPackage = findSuitablePackage(
+        monthlyBill,
+        daytimeUsagePercentage,
+        batteryCapacity
+    );
+
+    if (!recommendedPackage) {
+        alert("Không tìm thấy gói phù hợp cho thông tin của bạn.");
+        hideLoading();
+        return;
+    }
+
+    console.log("Recommended package:", recommendedPackage);
+
+    // Hiển thị kết quả
+    document.getElementById("total-cost").textContent = formatCurrency(
+        recommendedPackage.priceWithVatAfterDiscount
+    );
+    document.getElementById(
+        "system-capacity"
+    ).textContent = `${recommendedPackage.kwpNumber} kWp`;
+    document.getElementById("monthly-savings").textContent = formatCurrency(
+        recommendedPackage.averageMonthlySavings
+    );
+    document.getElementById("yearly-savings").textContent = formatCurrency(
+        recommendedPackage.averageMonthlySavings * 12
+    );
+    document.getElementById("thirty-year-savings").textContent = formatCurrency(
+        recommendedPackage.totalSavingsIn30Years
+    );
+    document.getElementById(
+        "payback-period"
+    ).textContent = `${recommendedPackage.returnOnInvestmentYears.toFixed(
+        1
+    )} năm`;
+
+    // Tính ROI - lợi nhuận đầu tư hàng năm (%)
+    const yearlyROI =
+        ((recommendedPackage.averageMonthlySavings * 12) /
+            recommendedPackage.priceWithVatAfterDiscount) *
+        100;
+    document.getElementById("roi").textContent = `${yearlyROI.toFixed(
+        1
+    )}% / năm`;
+
+    // Hiển thị tên gói đề xuất
+    document.getElementById(
+        "recommended-product"
+    ).textContent = `${recommendedPackage.productName} - ${recommendedPackage.powerDetails}`;
+
+    // Cập nhật thông tin pin lưu trữ nếu có
+    updateBatteryInfo(recommendedPackage);
+
+    // Hiển thị kết quả
+    document.getElementById("results-placeholder").classList.add("hidden");
+    document.getElementById("results-content").classList.remove("hidden");
+
+    // Hiển thị công suất cần thiết theo tính toán
+    if (document.getElementById("required-power")) {
+        document.getElementById(
+            "required-power"
+        ).textContent = `${requiredPower.toFixed(2)} kWp`;
+    }
 }
 
 // Xử lý thông tin về pin lưu trữ
 function updateBatteryInfo(recommendedPackage) {
+    // Kiểm tra xem gói có bao gồm pin lưu trữ không
+    const hasBattery = recommendedPackage.storage > 0;
+
     // Thêm thông tin về pin lưu trữ nếu gói được chọn có pin
     const batteryInfoElement = document.getElementById("battery-info");
-    if (recommendedPackage.hasBattery) {
+    if (hasBattery) {
         if (!batteryInfoElement) {
             // Tạo element mới nếu chưa tồn tại
             const batteryInfo = document.createElement("div");
             batteryInfo.id = "battery-info";
             batteryInfo.className =
-                "mb-6 p-5 bg-blue-50 rounded-lg shadow-sm border-l-4 border-blue-500";
+                "mb-6 p-5 bg-blue-50 rounded-lg shadow-sm border-l-4 border-blue-500 result-card";
             batteryInfo.innerHTML = `
                 <h3 class="text-primary font-semibold mb-4 text-lg flex items-center">
                     <i class="fas fa-battery-full mr-2 text-blue-500"></i> Thông tin bộ lưu điện:
                 </h3>
                 <p class="mb-4 text-sm">
                     Hệ thống được trang bị pin lưu trữ ${
-                        recommendedPackage.batteryCapacity
+                        recommendedPackage.storage
                     } kWh, có thể hoạt động như máy phát điện khi mất điện.
                 </p>
                 <ul class="space-y-2 text-sm list-disc pl-5">
                     <li>
                         Khả năng cung cấp: ${
-                            recommendedPackage.batteryCapacity
+                            recommendedPackage.storage
                         } kW trong vòng 1 giờ
                     </li>
                     <li>
@@ -404,12 +507,15 @@ function updateBatteryInfo(recommendedPackage) {
             `;
 
             // Chèn vào sau phần công suất hệ thống
-            const systemCapacityElement =
-                document.querySelector(".mb-6:nth-child(2)");
-            systemCapacityElement.parentNode.insertBefore(
-                batteryInfo,
-                systemCapacityElement.nextSibling
+            const systemCapacityElement = document.querySelector(
+                ".result-card:nth-child(2)"
             );
+            if (systemCapacityElement) {
+                systemCapacityElement.parentNode.insertBefore(
+                    batteryInfo,
+                    systemCapacityElement.nextSibling
+                );
+            }
         } else {
             // Cập nhật nếu đã tồn tại
             batteryInfoElement.innerHTML = `
@@ -418,13 +524,13 @@ function updateBatteryInfo(recommendedPackage) {
                 </h3>
                 <p class="mb-4 text-sm">
                     Hệ thống được trang bị pin lưu trữ ${
-                        recommendedPackage.batteryCapacity
+                        recommendedPackage.storage
                     } kWh, có thể hoạt động như máy phát điện khi mất điện.
                 </p>
                 <ul class="space-y-2 text-sm list-disc pl-5">
                     <li>
                         Khả năng cung cấp: ${
-                            recommendedPackage.batteryCapacity
+                            recommendedPackage.storage
                         } kW trong vòng 1 giờ
                     </li>
                     <li>
@@ -443,203 +549,4 @@ function updateBatteryInfo(recommendedPackage) {
         // Ẩn thông tin pin nếu gói không có pin
         batteryInfoElement.style.display = "none";
     }
-}
-
-// Event listener for form submission
-document.getElementById("solar-form").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    // Validate inputs
-    if (!validateInputs()) {
-        return;
-    }
-
-    // Show loading
-    showLoading();
-
-    // Simulate calculation delay (for better UX)
-    setTimeout(() => {
-        // Get user inputs
-        const region = document.getElementById("region").value;
-        // Chuyển đổi chuỗi tiền tệ thành số
-        const monthlyBillText =
-            document.getElementById("electricity-bill").value;
-        const monthlyBill = parseInt(monthlyBillText.replace(/[^\d]/g, ""));
-        const daytimeUsage = parseInt(
-            document.getElementById("daytime-usage").value
-        );
-        const batteryCapacity = parseFloat(
-            document.getElementById("battery-capacity").value
-        );
-
-        // Find suitable package
-        const recommendedPackage = findSuitablePackage(
-            monthlyBill,
-            daytimeUsage,
-            batteryCapacity
-        );
-
-        // Calculate results with adaptations for different data structures
-        const totalCost =
-            recommendedPackage.totalCost || recommendedPackage.cost || 0;
-        const systemCapacity =
-            recommendedPackage.power || recommendedPackage.capacity || 0;
-        const monthlySavings = recommendedPackage.monthlySavings;
-        const yearlySavings = recommendedPackage.yearlySavings;
-        const thirtyYearSavings = recommendedPackage.thirtyYearSavings;
-
-        // Xử lý thời gian hoàn vốn dựa trên cấu trúc dữ liệu
-        let paybackText = "";
-        if (recommendedPackage.paybackPeriod) {
-            paybackText = `${recommendedPackage.paybackPeriod} năm`;
-        } else if (recommendedPackage.paybackYears !== undefined) {
-            if (
-                recommendedPackage.paybackMonths &&
-                recommendedPackage.paybackMonths > 0
-            ) {
-                paybackText = `${recommendedPackage.paybackYears} năm ${recommendedPackage.paybackMonths} tháng`;
-            } else {
-                paybackText = `${recommendedPackage.paybackYears} năm`;
-            }
-        } else {
-            paybackText = "N/A";
-        }
-
-        // Tính ROI - đảm bảo sử dụng totalCost và yearlySavings
-        const roi = (yearlySavings / totalCost) * 100;
-
-        // Display results
-        document.getElementById("total-cost").textContent =
-            formatCurrency(totalCost);
-        document.getElementById(
-            "system-capacity"
-        ).textContent = `${systemCapacity} kWp`;
-        document.getElementById("monthly-savings").textContent =
-            formatCurrency(monthlySavings);
-        document.getElementById("yearly-savings").textContent =
-            formatCurrency(yearlySavings);
-        document.getElementById("thirty-year-savings").textContent =
-            formatCurrency(thirtyYearSavings);
-        document.getElementById("payback-period").textContent = paybackText;
-        document.getElementById("roi").textContent = `${roi.toFixed(1)}% / năm`;
-        document.getElementById("recommended-product").textContent =
-            recommendedPackage.name;
-
-        // Cập nhật thông tin pin lưu trữ
-        updateBatteryInfo(recommendedPackage);
-
-        // Hide loading and show results
-        hideLoading();
-
-        // Scroll to results
-        document
-            .getElementById("results")
-            .scrollIntoView({ behavior: "smooth" });
-    }, 800);
-});
-
-// Calculate solar system performance
-function calculateSolarSystem() {
-    // Lấy thông tin đầu vào từ người dùng
-    const monthlyBillText = document.getElementById("electricity-bill").value;
-    const monthlyBill = parseInt(monthlyBillText.replace(/[^\d]/g, ""));
-    const daytimeUsage = parseInt(
-        document.getElementById("daytime-usage").value
-    );
-    const batteryCapacity = parseFloat(
-        document.getElementById("battery-capacity").value
-    );
-
-    // Tìm gói phù hợp
-    const recommendedPackage = findSuitablePackage(
-        monthlyBill,
-        daytimeUsage,
-        batteryCapacity
-    );
-
-    if (!recommendedPackage) {
-        alert("Không tìm thấy gói phù hợp cho thông tin của bạn.");
-        return;
-    }
-
-    // Thích ứng với các cấu trúc dữ liệu khác nhau
-    const totalCost =
-        recommendedPackage.totalCost || recommendedPackage.cost || 0;
-    const systemCapacity =
-        recommendedPackage.power || recommendedPackage.capacity || 0;
-
-    // Hiển thị kết quả
-    document.getElementById("total-cost").textContent =
-        formatCurrency(totalCost);
-    document.getElementById(
-        "system-capacity"
-    ).textContent = `${systemCapacity} kWp`;
-    document.getElementById("monthly-savings").textContent = formatCurrency(
-        recommendedPackage.monthlySavings
-    );
-    document.getElementById("yearly-savings").textContent = formatCurrency(
-        recommendedPackage.yearlySavings
-    );
-    document.getElementById("thirty-year-savings").textContent = formatCurrency(
-        recommendedPackage.thirtyYearSavings
-    );
-
-    // Xử lý thời gian hoàn vốn dựa trên cấu trúc dữ liệu
-    let paybackText = "";
-    if (recommendedPackage.paybackPeriod) {
-        paybackText = `${recommendedPackage.paybackPeriod} năm`;
-    } else if (recommendedPackage.paybackYears !== undefined) {
-        if (
-            recommendedPackage.paybackMonths &&
-            recommendedPackage.paybackMonths > 0
-        ) {
-            paybackText = `${recommendedPackage.paybackYears} năm ${recommendedPackage.paybackMonths} tháng`;
-        } else {
-            paybackText = `${recommendedPackage.paybackYears} năm`;
-        }
-    } else {
-        paybackText = "N/A";
-    }
-    document.getElementById("payback-period").textContent = paybackText;
-
-    // Tính ROI - cần đảm bảo có totalCost và yearlySavings
-    const roi = (recommendedPackage.yearlySavings / totalCost) * 100;
-    document.getElementById("roi").textContent = `${roi.toFixed(1)}% / năm`;
-
-    // Hiển thị tên gói đề xuất
-    document.getElementById("recommended-product").textContent =
-        recommendedPackage.name;
-
-    // Cập nhật thông tin pin lưu trữ
-    updateBatteryInfo(recommendedPackage);
-
-    // Hiển thị kết quả
-    document.getElementById("results-placeholder").classList.add("hidden");
-    document.getElementById("results-content").classList.remove("hidden");
-}
-
-// Request quote function
-function requestQuote(packageName) {
-    const selectedPackage = currentSolarData.find(
-        (pkg) => pkg.name === packageName
-    );
-    if (!selectedPackage) return;
-
-    let regionText = "";
-    if (currentRegion === "north") {
-        regionText = "Miền Bắc";
-    } else if (currentRegion === "central") {
-        regionText = "Miền Trung";
-    } else if (currentRegion === "south") {
-        regionText = "Miền Nam";
-    }
-
-    const message = `Tôi quan tâm đến gói pin mặt trời "${packageName}" cho khu vực ${regionText}. Vui lòng liên hệ với tôi để có báo giá chi tiết.`;
-
-    // Open email client with pre-filled message
-    const emailSubject = `Yêu cầu báo giá hệ thống pin mặt trời - ${packageName}`;
-    const emailBody = encodeURIComponent(message);
-    window.location.href = `mailto:info@solarpower.vn?subject=${encodeURIComponent(
-        emailSubject
-    )}&body=${emailBody}`;
 }

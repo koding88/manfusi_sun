@@ -1,11 +1,11 @@
 // Constants for Northern Region (Miền Bắc) solar calculations
-const sunshineHoursCoefficient = 3.5; // Hệ số giờ nắng
-const averageElectricityPrice = 3000; // Tiền điện trung bình (VNĐ/kWh)
-const batteryStorageCoefficient = 0.6; // Hệ số pin lưu trữ (60%)
-const northernRegionCoefficient = 3.5; // TB Miền Bắc (Average coefficient for Northern Region)
+const NorthSunshineHoursCoefficient = 3.5; // Hệ số giờ nắng
+const NorthAverageElectricityPrice = 3000; // Tiền điện trung bình (VNĐ/kWh)
+const NorthBatteryStorageCoefficient = 0.6; // Hệ số pin lưu trữ (60%)
+const NorthernRegionCoefficient = 3.5; // TB Miền Bắc (Average coefficient for Northern Region)
 
 // Define variables for the solar system product information
-const Column = {
+const NorthColumn = {
     // STT - Order number
     orderNumber: 1,
 
@@ -94,36 +94,36 @@ const Column = {
     },
 };
 
-// Tạo một bản ghi mới với giá trị từ Column
+// Tạo một bản ghi mới với giá trị từ NorthNorthColumn
 function createRecord(data = {}) {
     const record = {
-        orderNumber: Column.orderNumber,
-        productType: Column.productType,
-        productName: Column.productName,
-        powerDetails: Column.powerDetails,
-        equipmentDetails: Column.equipmentDetails,
-        storage: Column.storage,
-        kwpNumber: Column.kwpNumber,
-        unitPrice: Column.unitPrice,
-        listedPrice: Column.listedPrice,
-        monthlyDiscountPercentage: Column.monthlyDiscountPercentage,
-        priceWithVatAfterDiscount: Column.priceWithVatAfterDiscount,
-        unitPricePerKwAfterDiscount: Column.unitPricePerKwAfterDiscount,
-        minimumDownPaymentPercentage: Column.minimumDownPaymentPercentage,
-        minimumDownPaymentAmount: Column.minimumDownPaymentAmount,
-        installmentAmount: Column.installmentAmount,
-        minimumMonthlyInstallment: Column.minimumMonthlyInstallment,
-        maximumMonthlyInstallment: Column.maximumMonthlyInstallment,
-        minimumRoofInstallationArea: Column.minimumRoofInstallationArea,
-        totalKwhProducedIn30Years: Column.totalKwhProducedIn30Years,
-        totalSavingsIn30Years: Column.totalSavingsIn30Years,
-        returnOnInvestmentYears: Column.returnOnInvestmentYears,
-        averageMonthlyKwhProduction: Column.averageMonthlyKwhProduction,
-        averageMonthlySavings: Column.averageMonthlySavings,
-        firstYearSavings: Column.firstYearSavings,
-        suitableForFamily80Percent: Column.suitableForFamily80Percent,
-        suitableForFamily50Percent: Column.suitableForFamily50Percent,
-        suitableForFamilyMonthly: Column.suitableForFamilyMonthly,
+        orderNumber: NorthColumn.orderNumber,
+        productType: NorthColumn.productType,
+        productName: NorthColumn.productName,
+        powerDetails: NorthColumn.powerDetails,
+        equipmentDetails: NorthColumn.equipmentDetails,
+        storage: NorthColumn.storage,
+        kwpNumber: NorthColumn.kwpNumber,
+        unitPrice: NorthColumn.unitPrice,
+        listedPrice: NorthColumn.listedPrice,
+        monthlyDiscountPercentage: NorthColumn.monthlyDiscountPercentage,
+        priceWithVatAfterDiscount: NorthColumn.priceWithVatAfterDiscount,
+        unitPricePerKwAfterDiscount: NorthColumn.unitPricePerKwAfterDiscount,
+        minimumDownPaymentPercentage: NorthColumn.minimumDownPaymentPercentage,
+        minimumDownPaymentAmount: NorthColumn.minimumDownPaymentAmount,
+        installmentAmount: NorthColumn.installmentAmount,
+        minimumMonthlyInstallment: NorthColumn.minimumMonthlyInstallment,
+        maximumMonthlyInstallment: NorthColumn.maximumMonthlyInstallment,
+        minimumRoofInstallationArea: NorthColumn.minimumRoofInstallationArea,
+        totalKwhProducedIn30Years: NorthColumn.totalKwhProducedIn30Years,
+        totalSavingsIn30Years: NorthColumn.totalSavingsIn30Years,
+        returnOnInvestmentYears: NorthColumn.returnOnInvestmentYears,
+        averageMonthlyKwhProduction: NorthColumn.averageMonthlyKwhProduction,
+        averageMonthlySavings: NorthColumn.averageMonthlySavings,
+        firstYearSavings: NorthColumn.firstYearSavings,
+        suitableForFamily80Percent: NorthColumn.suitableForFamily80Percent,
+        suitableForFamily50Percent: NorthColumn.suitableForFamily50Percent,
+        suitableForFamilyMonthly: NorthColumn.suitableForFamilyMonthly,
         ...data,
     };
 
@@ -162,17 +162,17 @@ function createRecord(data = {}) {
 
     // Số tiến tiết kiệm trung bình mỗi tháng ( H/s 80%)
     // Số KWP * 0.8 * 30 * Hệ số giờ nắng * Tiền điện trung bình + Lưu trữ * 30 * Tiền điện trung bình * Hệ số pin lưu trữ
-    // averageMonthlySavings = kwpNumber * 0.8 * 30 * sunshineHoursCoefficient * averageElectricityPrice + storage * 30 * averageElectricityPrice * batteryStorageCoefficient
+    // averageMonthlySavings = kwpNumber * 0.8 * 30 * NorthSunshineHoursCoefficient * averageElectricityPrice + storage * 30 * averageElectricityPrice * batteryStorageCoefficient
     record.averageMonthlySavings =
         record.kwpNumber *
             0.8 *
             30 *
-            sunshineHoursCoefficient *
-            averageElectricityPrice +
+            NorthSunshineHoursCoefficient *
+            NorthAverageElectricityPrice +
         record.storage *
             30 *
-            averageElectricityPrice *
-            batteryStorageCoefficient;
+            NorthAverageElectricityPrice *
+            NorthBatteryStorageCoefficient;
 
     // Số tiền tiết kiệm trong năm đầu tiên
     // Số tiết kiệm trung bình mỗi tháng * 12
@@ -181,7 +181,7 @@ function createRecord(data = {}) {
 
     // Số kWh hệ thống sản xuất trung bình 1 tháng  (H/s 80%) = Số tiến tiết kiệm trung bình mỗi tháng ( H/s 80%) / Tiền điện trung bình
     record.averageMonthlyKwhProduction =
-        record.averageMonthlySavings / averageElectricityPrice;
+        record.averageMonthlySavings / NorthAverageElectricityPrice;
 
     // Số kWh hệ thống sản xuất trong 30 năm = Số kWh hệ thống sản xuất trung bình 1 tháng * 12 * 30
     record.totalKwhProducedIn30Years =
@@ -189,7 +189,7 @@ function createRecord(data = {}) {
 
     // Số tiền tiết kiệm được trong 30 năm = Số kWh hệ thống sản xuất trong 30 năm * Tiền điện trung bình
     record.totalSavingsIn30Years =
-        record.totalKwhProducedIn30Years * averageElectricityPrice;
+        record.totalKwhProducedIn30Years * NorthAverageElectricityPrice;
 
     // T/g hoàn vốn (Năm) = (GIÁ LÀM BAO GỒM 10% VAT / Số tiến tiết kiệm trung bình mỗi tháng) / 12
     record.returnOnInvestmentYears =
@@ -227,10 +227,10 @@ function createRecord(data = {}) {
 // (minimumRoofInstallationArea = 5 * kwpNumber)
 
 // Số kWh hệ thống sản xuất trung bình 1 tháng  (H/s 80%) = Số tiến tiết kiệm trung bình mỗi tháng ( H/s 80%) / Tiền điện trung bình
-// averageMonthlyKwhProduction = averageMonthlySavings / averageElectricityPrice
+// averageMonthlyKwhProduction = averageMonthlySavings / NorthAverageElectricityPrice
 
 // Số tiền tiết kiệm trung bình mỗi tháng ( H/s 80%) = Số KWP * 0.8 * 30 * Hệ số giờ nắng * Tiền điện trung bình + Lưu trữ * 30 * Tiền điện trung bình * Hệ số pin lưu trữ
-// averageMonthlySavings = kwpNumber * 0.8 * 30 * sunshineHoursCoefficient * averageElectricityPrice + storage * 30 * averageElectricityPrice * batteryStorageCoefficient
+// averageMonthlySavings = kwpNumber * 0.8 * 30 * sunshineHoursCoefficient * NorthAverageElectricityPrice + storage * 30 * NorthAverageElectricityPrice * batteryStorageCoefficient
 
 // Số tiền tiết kiệm trong năm đầu tiên = Số tiết kiệm trung bình mỗi tháng * 12
 // firstYearSavings = averageMonthlySavings * 12
@@ -239,7 +239,7 @@ function createRecord(data = {}) {
 // totalKwhProducedIn30Years = averageMonthlyKwhProduction * 12 * 30
 
 // Số tiền tiết kiệm được trong 30 năm = Số kWh hệ thống sản xuất trong 30 năm * Tiền điện trung bình
-// totalSavingsIn30Years = totalKwhProducedIn30Years * averageElectricityPrice
+// totalSavingsIn30Years = totalKwhProducedIn30Years * NorthAverageElectricityPrice
 
 // T/g hoàn vốn (Năm) = (GIÁ LÀM BAO GỒM 10% VAT / Số tiến tiết kiệm trung bình mỗi tháng) / 12
 // returnOnInvestmentYears = (priceWithVatAfterDiscount / averageMonthlySavings) / 12
@@ -251,11 +251,11 @@ function createRecord(data = {}) {
 // suitableForFamily50Percent = averageMonthlySavings / 0.5
 
 // Sử dụng
-const data = [
+const NorthRecords = [
     // Row 1
-    (row1 = createRecord({
+    createRecord({
         orderNumber: 1,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S6-1P",
         powerDetails: "Hệ bám tải 5,49 kWp 1 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
@@ -269,11 +269,11 @@ const data = [
             min: 1500000,
             max: 2000000,
         },
-    })),
+    }),
     // // Row 2
-    (row2 = createRecord({
+    createRecord({
         orderNumber: 2,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S8-1P",
         powerDetails: "Hệ bám tải 8,54 kWp 1 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
@@ -287,11 +287,11 @@ const data = [
             min: 2500000,
             max: 4000000,
         },
-    })),
+    }),
     // // Row 3
-    (row3 = createRecord({
+    createRecord({
         orderNumber: 3,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S11-1P",
         powerDetails: "Hệ bám tải 10,98 kWp 1 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
@@ -305,11 +305,11 @@ const data = [
             min: 3000000,
             max: 5000000,
         },
-    })),
+    }),
     // // Row 4
-    (row4 = createRecord({
+    createRecord({
         orderNumber: 4,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S11-3P",
         powerDetails: "Hệ bám tải 10,98 kWp 3 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
@@ -323,11 +323,11 @@ const data = [
             min: 3000000,
             max: 5000000,
         },
-    })),
+    }),
     // // Row 5
-    (row5 = createRecord({
+    createRecord({
         orderNumber: 5,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S17-3P",
         powerDetails: "Hệ bám tải 17,08 kWp 3 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
@@ -341,11 +341,11 @@ const data = [
             min: 4000000,
             max: 8000000,
         },
-    })),
+    }),
     // // Row 6
-    (row6 = createRecord({
+    createRecord({
         orderNumber: 6,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S22-3P",
         powerDetails: "Hệ bám tải 21,96 kWp 3 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
@@ -359,11 +359,11 @@ const data = [
             min: 6000000,
             max: 9500000,
         },
-    })),
+    }),
     // // Row 7
-    (row7 = createRecord({
+    createRecord({
         orderNumber: 7,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S34-3P",
         powerDetails: "Hệ bám tải 34,16 kWp 3 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
@@ -377,11 +377,11 @@ const data = [
             min: 9000000,
             max: 15000000,
         },
-    })),
+    }),
     // // Row 8
-    (row8 = createRecord({
+    createRecord({
         orderNumber: 8,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S55-3P",
         powerDetails: "Hệ bám tải 54,9 kWp 3 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Deye",
@@ -395,11 +395,11 @@ const data = [
             min: 15000000,
             max: 24000000,
         },
-    })),
+    }),
     // // Row 9
-    (row9 = createRecord({
+    createRecord({
         orderNumber: 9,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S92-3P",
         powerDetails: "Hệ bám tải 91,5 kWp 3 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Growatt",
@@ -413,11 +413,11 @@ const data = [
             min: 25000000,
             max: 40000000,
         },
-    })),
+    }),
     // Row 10
-    (row10 = createRecord({
+    createRecord({
         orderNumber: 10,
-        productType: Column.productType.BAM_TAI,
+        productType: NorthColumn.productType.BAM_TAI,
         productName: "S120-3P",
         powerDetails: "Hệ bám tải 118,95 kWp 3 pha, không lưu trữ",
         equipmentDetails: "Tấm quang năng JA 610W, biến tần Growatt",
@@ -431,11 +431,11 @@ const data = [
             min: 32000000,
             max: 52000000,
         },
-    })),
+    }),
     // // Row 11
-    (row11 = createRecord({
+    createRecord({
         orderNumber: 11,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB5-1P",
         powerDetails: "Hệ bám tải, lưu trữ 5,49kWp 1 pha, pin lưu trữ 5,12 kWh",
         equipmentDetails:
@@ -450,11 +450,11 @@ const data = [
             min: 2000000,
             max: 3000000,
         },
-    })),
+    }),
     // // Row 12
-    (row12 = createRecord({
+    createRecord({
         orderNumber: 12,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB5-1P",
         powerDetails: "Hệ bám tải, lưu trữ 5,49kWp 1 pha, pin lưu trữ 5,12 kWh",
         equipmentDetails:
@@ -469,11 +469,11 @@ const data = [
             min: 2000000,
             max: 3000000,
         },
-    })),
+    }),
     // // Row 13
-    (row13 = createRecord({
+    createRecord({
         orderNumber: 13,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB8-1P",
         powerDetails: "Hệ bám tải, lưu trữ 8,54kWp 1 pha, pin lưu trữ 5,12 kWh",
         equipmentDetails:
@@ -488,11 +488,11 @@ const data = [
             min: 2600000,
             max: 4200000,
         },
-    })),
+    }),
     // // Row 14
-    (row14 = createRecord({
+    createRecord({
         orderNumber: 14,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB8-1P",
         powerDetails: "Hệ bám tải, lưu trữ 8,54kWp 1 pha, pin lưu trữ 5,12 kWh",
         equipmentDetails:
@@ -507,11 +507,11 @@ const data = [
             min: 2600000,
             max: 4300000,
         },
-    })),
+    }),
     // // Row 15
-    (row15 = createRecord({
+    createRecord({
         orderNumber: 15,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB8-1P",
         powerDetails: "Hệ bám tải, lưu trữ 8,54kWp 1 pha, pin lưu trữ 5,12 kWh",
         equipmentDetails:
@@ -526,11 +526,11 @@ const data = [
             min: 2600000,
             max: 4400000,
         },
-    })),
+    }),
     // Row 16
-    (row16 = createRecord({
+    createRecord({
         orderNumber: 16,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB11-1P",
         powerDetails:
             "Hệ bám tải, lưu trữ 10,98kWp 1 pha, pin lưu trữ 5,12 kWh",
@@ -546,11 +546,11 @@ const data = [
             min: 3300000,
             max: 5200000,
         },
-    })),
+    }),
     // Row 17
-    (row17 = createRecord({
+    createRecord({
         orderNumber: 17,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB11-3P",
         powerDetails:
             "Hệ bám tải, lưu trữ 10,98kWp 3 pha, pin lưu trữ 5,12 kWh",
@@ -566,11 +566,11 @@ const data = [
             min: 3300000,
             max: 5300000,
         },
-    })),
+    }),
     // Row 18
-    (row18 = createRecord({
+    createRecord({
         orderNumber: 18,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB11-3P",
         powerDetails:
             "Hệ bám tải, lưu trữ 10,98kWp 3 pha, pin lưu trữ 5,12 kWh",
@@ -586,11 +586,11 @@ const data = [
             min: 3300000,
             max: 5400000,
         },
-    })),
+    }),
     // Row 19
-    (row19 = createRecord({
+    createRecord({
         orderNumber: 19,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB15-1P",
         powerDetails:
             "Hệ bám tải, lưu trữ 14,64kWp 1 pha, pin lưu trữ 5,12 kWh",
@@ -606,11 +606,11 @@ const data = [
             min: 4200000,
             max: 6800000,
         },
-    })),
+    }),
     // Row 20
-    (row20 = createRecord({
+    createRecord({
         orderNumber: 20,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB15-3P",
         powerDetails:
             "Hệ bám tải, lưu trữ 14,64kWp 3 pha, pin lưu trữ 5,12 kWh",
@@ -626,11 +626,11 @@ const data = [
             min: 4200000,
             max: 6900000,
         },
-    })),
+    }),
     // Row 21
-    (row21 = createRecord({
+    createRecord({
         orderNumber: 21,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "ECO7-1P",
         powerDetails: "Hệ bám tải, lưu trữ 7,32kWp 1 pha, pin lưu trữ 5,12 kWh",
         equipmentDetails:
@@ -645,11 +645,11 @@ const data = [
             min: 2300000,
             max: 3700000,
         },
-    })),
+    }),
     // Row 22
-    (row22 = createRecord({
+    createRecord({
         orderNumber: 22,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "ECO12-1P",
         powerDetails: "Hệ bám tải, lưu trữ 12,2kWp 1 pha, pin lưu trữ 5,12 kWh",
         equipmentDetails:
@@ -664,11 +664,11 @@ const data = [
             min: 3600000,
             max: 5800000,
         },
-    })),
+    }),
     // Row 23
-    (row23 = createRecord({
+    createRecord({
         orderNumber: 23,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB13-3P",
         powerDetails:
             "Hệ bám tải, lưu trữ 13,42kWp 3 pha, pin lưu trữ 5,12 kWh",
@@ -684,11 +684,11 @@ const data = [
             min: 3900000,
             max: 6400000,
         },
-    })),
+    }),
     // Row 24
-    (row24 = createRecord({
+    createRecord({
         orderNumber: 24,
-        productType: Column.productType.LUU_TRU,
+        productType: NorthColumn.productType.LUU_TRU,
         productName: "SHB17-3P",
         powerDetails:
             "Hệ bám tải, lưu trữ 17,08kWp 3 pha, pin lưu trữ 5,12 kWh",
@@ -704,37 +704,15 @@ const data = [
             min: 4900000,
             max: 8000000,
         },
-    })),
+    }),
 ];
 
-console.log(`orderNumber: ${row1.orderNumber}`);
-console.log(`productType: ${row1.productType}`);
-console.log(`productName: ${row1.productName}`);
-console.log(`powerDetails: ${row1.powerDetails}`);
-console.log(`equipmentDetails: ${row1.equipmentDetails}`);
-console.log(`storage: ${row1.storage}`);
-console.log(`kwpNumber: ${row1.kwpNumber}`);
-console.log(`unitPrice: ${row1.unitPrice}`);
-console.log(`listedPrice: ${row1.listedPrice}`);
-console.log(`monthlyDiscountPercentage: ${row1.monthlyDiscountPercentage}`);
-console.log(`priceWithVatAfterDiscount: ${row1.priceWithVatAfterDiscount}`);
-console.log(`unitPricePerKwAfterDiscount: ${row1.unitPricePerKwAfterDiscount}`);
-console.log(
-    `minimumDownPaymentPercentage: ${row1.minimumDownPaymentPercentage}`
-);
-console.log(`minimumDownPaymentAmount: ${row1.minimumDownPaymentAmount}`);
-console.log(`installmentAmount: ${row1.installmentAmount}`);
-console.log(`minimumMonthlyInstallment: ${row1.minimumMonthlyInstallment}`);
-console.log(`maximumMonthlyInstallment: ${row1.maximumMonthlyInstallment}`);
-console.log(`minimumRoofInstallationArea: ${row1.minimumRoofInstallationArea}`);
-console.log(`totalKwhProducedIn30Years: ${row1.totalKwhProducedIn30Years}`);
-console.log(`totalSavingsIn30Years: ${row1.totalSavingsIn30Years}`);
-console.log(`returnOnInvestmentYears: ${row1.returnOnInvestmentYears}`);
-console.log(`averageMonthlyKwhProduction: ${row1.averageMonthlyKwhProduction}`);
-console.log(`averageMonthlySavings: ${row1.averageMonthlySavings}`);
-console.log(`firstYearSavings: ${row1.firstYearSavings}`);
-console.log(`suitableForFamily80Percent: ${row1.suitableForFamily80Percent}`);
-console.log(`suitableForFamily50Percent: ${row1.suitableForFamily50Percent}`);
-console.log(
-    `suitableForFamilyMonthly: ${row1.suitableForFamilyMonthly.min} - ${row1.suitableForFamilyMonthly.max}`
-);
+const NorthData = {
+    sunshineHoursCoefficient: NorthSunshineHoursCoefficient,
+    averageElectricityPrice: NorthAverageElectricityPrice,
+    batteryStorageCoefficient: NorthBatteryStorageCoefficient,
+    regionCoefficient: NorthernRegionCoefficient,
+    records: NorthRecords,
+};
+
+export default NorthData;

@@ -169,6 +169,37 @@
                 .solar-icon-pulse {
                     animation: pulse-slow 3s infinite;
                 }
+
+                .tooltip {
+                    position: relative;
+                    display: inline-block;
+                    cursor: pointer;
+                }
+
+                .tooltip .tooltiptext {
+                    visibility: hidden;
+                    width: 250px;
+                    background-color: #555;
+                    color: #fff;
+                    text-align: center;
+                    border-radius: 6px;
+                    padding: 10px;
+                    position: absolute;
+                    z-index: 1;
+                    bottom: 125%;
+                    left: 50%;
+                    margin-left: -125px;
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                    font-size: 0.875rem;
+                    font-weight: normal;
+                    line-height: 1.4;
+                }
+
+                .tooltip:hover .tooltiptext {
+                    visibility: visible;
+                    opacity: 1;
+                }
             }
         </style>
     </head>
@@ -334,6 +365,17 @@
                                 ></i>
                                 Mức sử dụng điện từ 6 đến 18h
                                 <span class="text-accent">*</span>
+                                <span class="tooltip ml-2">
+                                    <i
+                                        class="fas fa-question-circle text-gray-500"
+                                    ></i>
+                                    <span class="tooltiptext"
+                                        >Tỷ lệ phần trăm điện năng tiêu thụ
+                                        trong khung giờ 6h-18h (có nắng). Thường
+                                        chiếm 40-60% tổng điện năng tiêu thụ
+                                        hàng ngày.</span
+                                    >
+                                </span>
                             </label>
 
                             <div class="slider-container">
@@ -438,6 +480,28 @@
                             <h3
                                 class="text-primary font-semibold mb-4 text-lg flex items-center"
                             >
+                                <i class="fas fa-bolt text-accent mr-2"></i>
+                                Công suất cần thiết:
+                            </h3>
+                            <p
+                                id="required-power"
+                                class="text-accent font-semibold text-lg"
+                            >
+                                -
+                            </p>
+                            <small class="block mt-1 text-gray-600 text-sm">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Dựa trên lượng điện tiêu thụ ban ngày và hệ số
+                                giờ nắng của khu vực
+                            </small>
+                        </div>
+
+                        <div
+                            class="mb-6 p-5 bg-gray-50 rounded-lg shadow-md result-card"
+                        >
+                            <h3
+                                class="text-primary font-semibold mb-4 text-lg flex items-center"
+                            >
                                 <i class="fas fa-coins text-accent mr-2"></i>
                                 Tổng chi phí:
                             </h3>
@@ -509,7 +573,9 @@
                                         class="fas fa-history text-accent mr-3 w-5"
                                     ></i>
                                     Thời gian thu hồi vốn:
-                                    <span id="payback-period" class="ml-1"
+                                    <span
+                                        id="payback-period"
+                                        class="text-accent font-semibold ml-1"
                                         >-</span
                                     >
                                 </li>
@@ -579,6 +645,6 @@
             </footer>
         </div>
 
-        <script src="script.js"></script>
+        <script type="module" src="script.js"></script>
     </body>
 </html>
