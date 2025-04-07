@@ -805,7 +805,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 5.49,
-        unitPrice: 20000000,
+        unitPrice: 45000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 1300000,
@@ -829,7 +829,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần DaHai, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 5.49,
-        unitPrice: 19000000,
+        unitPrice: 44000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 1200000,
@@ -853,7 +853,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 8.54,
-        unitPrice: 20000000,
+        unitPrice: 45000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 2000000,
@@ -877,7 +877,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần DaHai, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 8.54,
-        unitPrice: 19000000,
+        unitPrice: 44000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 1900000,
@@ -901,7 +901,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 8.54,
-        unitPrice: 20000000,
+        unitPrice: 45000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 2000000,
@@ -925,7 +925,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 10.98,
-        unitPrice: 18000000,
+        unitPrice: 43000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 2300000,
@@ -949,7 +949,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 10.98,
-        unitPrice: 18000000,
+        unitPrice: 43000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 2300000,
@@ -973,7 +973,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 10.98,
-        unitPrice: 18000000,
+        unitPrice: 43000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 2300000,
@@ -997,7 +997,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 14.64,
-        unitPrice: 18000000,
+        unitPrice: 43000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 3100000,
@@ -1021,7 +1021,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Deye, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 14.64,
-        unitPrice: 18000000,
+        unitPrice: 43000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 3100000,
@@ -1045,7 +1045,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 7.32,
-        unitPrice: 16000000,
+        unitPrice: 41000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 1400000,
@@ -1069,7 +1069,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 12.2,
-        unitPrice: 16000000,
+        unitPrice: 41000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 2300000,
@@ -1093,7 +1093,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 13.42,
-        unitPrice: 18000000,
+        unitPrice: 43000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 2900000,
@@ -1117,7 +1117,7 @@ const CentralRecords = [
             "Tấm quang năng JA 610W, biến tần Growat, pin lưu trữ Liman",
         storage: 14.36,
         kwpNumber: 17.08,
-        unitPrice: 18000000,
+        unitPrice: 43000000,
         monthlyDiscountPercentage: 10, // 10%
         minimumDownPaymentPercentage: 10, // 10%
         minimumMonthlyInstallment: 3700000,
